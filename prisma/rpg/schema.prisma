@@ -1,0 +1,767 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../node_modules/@rpgdb/client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL_RPG")
+  relationMode = "prisma"
+}
+
+
+model UserProfile {
+  uuid          String    @id @db.VarChar(32) @map("uniqueId")
+  premiumId         String?   @unique(map: "premiumId") @db.VarChar(32)
+  lastNickname      String?   @unique(map: "lastNickname") @db.VarChar(16)
+  hashedPassword    String?   @db.VarChar(256)
+  verificationToken String?   @db.VarChar(32)
+  mailAddress       String?   @db.VarChar(128)
+  sessionExpire     DateTime? @db.Timestamp(0)
+  lastServer        String?   @db.VarChar(32)
+  lastAddress       String?   @db.VarChar(40)
+  lastSeen          DateTime? @db.Timestamp(0)
+  firstAddress      String?   @db.VarChar(40)
+  firstSeen         DateTime? @db.Timestamp(0)
+
+  rankingLevel RankingLevel? 
+
+
+  @@map("user_profiles")
+}
+
+model UserSkinData {
+  uuid            String  @id @db.VarChar(36) 
+  lastKnownName  String? @db.VarChar(16) @map("last_known_name")
+  value           String  @db.Text
+  signature       String  @db.Text
+  timestamp       BigInt
+
+  @@map("sr_player_skins")
+}
+
+
+model RankNetwork {
+  name String @id @db.VarChar(36)
+
+  @@map("luckperms_groups")
+}
+
+model PlayerRankNetwork {
+  uuid          String @id @db.VarChar(36)
+  userName      String @db.VarChar(16) @map("username")
+  primaryGroup String @db.VarChar(36) @map("primary_group")
+
+  @@index([userName], map: "luckperms_players_username")
+  @@map("luckperms_players")
+}
+
+model RankingLevel {
+  uuid                String   @id @db.VarChar(36) @map("id") 
+  value             Decimal? @db.Decimal(65, 2)
+  hourlyDelta      Decimal? @db.Decimal(65, 2) @map("hourly_delta")
+  hourlyLastTotal  Decimal? @db.Decimal(65, 2) @map("hourly_lasttotal")
+  hourlyTimestamp  Decimal? @db.Decimal(65, 2) @map("hourly_timestamp")
+  dailyDelta       Decimal? @db.Decimal(65, 2) @map("daily_delta")
+  dailyLastTotal   Decimal? @db.Decimal(65, 2) @map("daily_lasttotal")
+  dailyTimestamp   Decimal? @db.Decimal(65, 2) @map("daily_timestamp") 
+  weeklyDelta      Decimal? @db.Decimal(65, 2) @map("weekly_delta")
+  weeklyLastTotal  Decimal? @db.Decimal(65, 2) @map("weekly_lasttotal")
+  weeklyTimestamp  Decimal? @db.Decimal(65, 2) @map("weekly_timestamp")
+  monthlyDelta     Decimal? @db.Decimal(65, 2) @map("monthly_delta") 
+  monthlyLastTotal Decimal? @db.Decimal(65, 2) @map("monthly_lasttotal")
+  monthlyTimestamp Decimal? @db.Decimal(65, 2) @map("monthly_timestamp") 
+  yearlyDelta      Decimal? @db.Decimal(65, 2) @map("yearly_delta")
+  yearlyLastTotal  Decimal? @db.Decimal(65, 2) @map("yearly_lasttotal") 
+  yearlyTimestamp  Decimal? @db.Decimal(65, 2) @map("yearly_timestamp")
+  nameCache         String?  @db.VarChar(16) @map("namecache") 
+  prefixcache       String?  @db.VarChar(1024) 
+  suffixcache       String?  @db.VarChar(1024)
+  displayNameCache  String?  @db.VarChar(2048) @map("displaynamecache")  
+
+  userProfile UserProfile? @relation(fields: [uuid], references: [uuid])  
+
+  @@index([dailyTimestamp], map: "daily_timestamp")
+  @@index([hourlyTimestamp], map: "hourly_timestamp")
+  @@index([monthlyTimestamp], map: "monthly_timestamp")
+  @@index([weeklyTimestamp], map: "weekly_timestamp")
+  @@index([yearlyTimestamp], map: "yearly_timestamp")
+  
+  @@map("ajlb_BLP_LEVEL")
+}
+
+model RankingDeath {
+  uuid                String   @id @db.VarChar(36) @map("id")
+  value             Decimal? @db.Decimal(65, 2)
+  hourlyDelta      Decimal? @db.Decimal(65, 2) @map("hourly_delta")
+  hourlyLastTotal  Decimal? @db.Decimal(65, 2) @map("hourly_lasttotal")
+  hourlyTimestamp  Decimal? @db.Decimal(65, 2) @map("hourly_timestamp")
+  dailyDelta       Decimal? @db.Decimal(65, 2) @map("daily_delta")
+  dailyLastTotal   Decimal? @db.Decimal(65, 2) @map("daily_lasttotal")
+  dailyTimestamp   Decimal? @db.Decimal(65, 2) @map("daily_timestamp")
+  weeklyDelta      Decimal? @db.Decimal(65, 2) @map("weekly_delta")
+  weeklyLastTotal  Decimal? @db.Decimal(65, 2) @map("weekly_lasttotal")
+  weeklyTimestamp  Decimal? @db.Decimal(65, 2) @map("weekly_timestamp")
+  monthlyDelta     Decimal? @db.Decimal(65, 2) @map("monthly_delta")
+  monthlyLastTotal Decimal? @db.Decimal(65, 2) @map("monthly_lasttotal")
+  monthlyTimestamp Decimal? @db.Decimal(65, 2) @map("monthly_timestamp")
+  yearlyDelta      Decimal? @db.Decimal(65, 2) @map("yearly_delta")
+  yearlyLastTotal  Decimal? @db.Decimal(65, 2) @map("yearly_lasttotal")
+  yearlyTimestamp  Decimal? @db.Decimal(65, 2) @map("yearly_timestamp")
+  nameCache         String?  @db.VarChar(16) @map("namecache")
+  prefixcache       String?  @db.VarChar(1024)
+  suffixcache       String?  @db.VarChar(1024)
+  displayNameCache  String?  @db.VarChar(2048) @map("displaynamecache") 
+
+  @@index([dailyTimestamp], map: "daily_timestamp")
+  @@index([hourlyTimestamp], map: "hourly_timestamp")
+  @@index([monthlyTimestamp], map: "monthly_timestamp")
+  @@index([weeklyTimestamp], map: "weekly_timestamp")
+  @@index([yearlyTimestamp], map: "yearly_timestamp")
+
+  @@map("ajlb_deluxecombat_ranking_deaths")
+}
+
+model RankingKD {
+  uuid                String   @id @db.VarChar(36) @map("id")
+  value             Decimal? @db.Decimal(65, 2)
+  hourlyDelta      Decimal? @db.Decimal(65, 2) @map("hourly_delta")
+  hourlyLastTotal  Decimal? @db.Decimal(65, 2) @map("hourly_lasttotal")
+  hourlyTimestamp  Decimal? @db.Decimal(65, 2) @map("hourly_timestamp")
+  dailyDelta       Decimal? @db.Decimal(65, 2) @map("daily_delta")
+  dailyLastTotal   Decimal? @db.Decimal(65, 2) @map("daily_lasttotal")
+  dailyTimestamp   Decimal? @db.Decimal(65, 2) @map("daily_timestamp")
+  weeklyDelta      Decimal? @db.Decimal(65, 2) @map("weekly_delta")
+  weeklyLastTotal  Decimal? @db.Decimal(65, 2) @map("weekly_lasttotal")
+  weeklyTimestamp  Decimal? @db.Decimal(65, 2) @map("weekly_timestamp")
+  monthlyDelta     Decimal? @db.Decimal(65, 2) @map("monthly_delta")
+  monthlyLastTotal Decimal? @db.Decimal(65, 2) @map("monthly_lasttotal")
+  monthlyTimestamp Decimal? @db.Decimal(65, 2) @map("monthly_timestamp")
+  yearlyDelta      Decimal? @db.Decimal(65, 2) @map("yearly_delta")
+  yearlyLastTotal  Decimal? @db.Decimal(65, 2) @map("yearly_lasttotal")
+  yearlyTimestamp  Decimal? @db.Decimal(65, 2) @map("yearly_timestamp")
+  nameCache         String?  @db.VarChar(16) @map("namecache")
+  prefixcache       String?  @db.VarChar(1024)
+  suffixcache       String?  @db.VarChar(1024)
+  displayNameCache  String?  @db.VarChar(2048) @map("displaynamecache") 
+
+  @@index([dailyTimestamp], map: "daily_timestamp")
+  @@index([hourlyTimestamp], map: "hourly_timestamp")
+  @@index([monthlyTimestamp], map: "monthly_timestamp")
+  @@index([weeklyTimestamp], map: "weekly_timestamp")
+  @@index([yearlyTimestamp], map: "yearly_timestamp")
+
+  @@map("ajlb_deluxecombat_ranking_kd")
+}
+
+model RankingKill {
+  uuid                String   @id @db.VarChar(36) @map("id")
+  value             Decimal? @db.Decimal(65, 2)
+  hourlyDelta      Decimal? @db.Decimal(65, 2) @map("hourly_delta")
+  hourlyLastTotal  Decimal? @db.Decimal(65, 2) @map("hourly_lasttotal")
+  hourlyTimestamp  Decimal? @db.Decimal(65, 2) @map("hourly_timestamp")
+  dailyDelta       Decimal? @db.Decimal(65, 2) @map("daily_delta")
+  dailyLastTotal   Decimal? @db.Decimal(65, 2) @map("daily_lasttotal")
+  dailyTimestamp   Decimal? @db.Decimal(65, 2) @map("daily_timestamp")
+  weeklyDelta      Decimal? @db.Decimal(65, 2) @map("weekly_delta")
+  weeklyLastTotal  Decimal? @db.Decimal(65, 2) @map("weekly_lasttotal")
+  weeklyTimestamp  Decimal? @db.Decimal(65, 2) @map("weekly_timestamp")
+  monthlyDelta     Decimal? @db.Decimal(65, 2) @map("monthly_delta")
+  monthlyLastTotal Decimal? @db.Decimal(65, 2) @map("monthly_lasttotal")
+  monthlyTimestamp Decimal? @db.Decimal(65, 2) @map("monthly_timestamp")
+  yearlyDelta      Decimal? @db.Decimal(65, 2) @map("yearly_delta")
+  yearlyLastTotal  Decimal? @db.Decimal(65, 2) @map("yearly_lasttotal")
+  yearlyTimestamp  Decimal? @db.Decimal(65, 2) @map("yearly_timestamp")
+  nameCache         String?  @db.VarChar(16) @map("namecache")
+  prefixcache       String?  @db.VarChar(1024)
+  suffixcache       String?  @db.VarChar(1024)
+  displayNameCache  String?  @db.VarChar(2048) @map("displaynamecache") 
+
+  @@index([dailyTimestamp], map: "daily_timestamp")
+  @@index([hourlyTimestamp], map: "hourly_timestamp")
+  @@index([monthlyTimestamp], map: "monthly_timestamp")
+  @@index([weeklyTimestamp], map: "weekly_timestamp")
+  @@index([yearlyTimestamp], map: "yearly_timestamp")
+
+  @@map("ajlb_deluxecombat_ranking_kills")
+}
+
+model RankingMaxStreak {
+  uuid                String   @id @db.VarChar(36) @map("id")
+  value             Decimal? @db.Decimal(65, 2)
+  hourlyDelta      Decimal? @db.Decimal(65, 2) @map("hourly_delta")
+  hourlyLastTotal  Decimal? @db.Decimal(65, 2) @map("hourly_lasttotal")
+  hourlyTimestamp  Decimal? @db.Decimal(65, 2) @map("hourly_timestamp")
+  dailyDelta       Decimal? @db.Decimal(65, 2) @map("daily_delta")
+  dailyLastTotal   Decimal? @db.Decimal(65, 2) @map("daily_lasttotal")
+  dailyTimestamp   Decimal? @db.Decimal(65, 2) @map("daily_timestamp")
+  weeklyDelta      Decimal? @db.Decimal(65, 2) @map("weekly_delta")
+  weeklyLastTotal  Decimal? @db.Decimal(65, 2) @map("weekly_lasttotal")
+  weeklyTimestamp  Decimal? @db.Decimal(65, 2) @map("weekly_timestamp")
+  monthlyDelta     Decimal? @db.Decimal(65, 2) @map("monthly_delta")
+  monthlyLastTotal Decimal? @db.Decimal(65, 2) @map("monthly_lasttotal")
+  monthlyTimestamp Decimal? @db.Decimal(65, 2) @map("monthly_timestamp")
+  yearlyDelta      Decimal? @db.Decimal(65, 2) @map("yearly_delta")
+  yearlyLastTotal  Decimal? @db.Decimal(65, 2) @map("yearly_lasttotal")
+  yearlyTimestamp  Decimal? @db.Decimal(65, 2) @map("yearly_timestamp")
+  nameCache         String?  @db.VarChar(16) @map("namecache")
+  prefixcache       String?  @db.VarChar(1024)
+  suffixcache       String?  @db.VarChar(1024)
+  displayNameCache  String?  @db.VarChar(2048) @map("displaynamecache") 
+
+  @@index([dailyTimestamp], map: "daily_timestamp")
+  @@index([hourlyTimestamp], map: "hourly_timestamp")
+  @@index([monthlyTimestamp], map: "monthly_timestamp")
+  @@index([weeklyTimestamp], map: "weekly_timestamp")
+  @@index([yearlyTimestamp], map: "yearly_timestamp")
+
+  @@map("ajlb_deluxecombat_ranking_maxstreak")
+}
+
+model RankingElo {
+  uuid                String   @id @db.VarChar(36) @map("id")
+  value             Decimal? @db.Decimal(65, 2)
+  hourlyDelta      Decimal? @db.Decimal(65, 2) @map("hourly_delta")
+  hourlyLastTotal  Decimal? @db.Decimal(65, 2) @map("hourly_lasttotal")
+  hourlyTimestamp  Decimal? @db.Decimal(65, 2) @map("hourly_timestamp")
+  dailyDelta       Decimal? @db.Decimal(65, 2) @map("daily_delta")
+  dailyLastTotal   Decimal? @db.Decimal(65, 2) @map("daily_lasttotal")
+  dailyTimestamp   Decimal? @db.Decimal(65, 2) @map("daily_timestamp")
+  weeklyDelta      Decimal? @db.Decimal(65, 2) @map("weekly_delta")
+  weeklyLastTotal  Decimal? @db.Decimal(65, 2) @map("weekly_lasttotal")
+  weeklyTimestamp  Decimal? @db.Decimal(65, 2) @map("weekly_timestamp")
+  monthlyDelta     Decimal? @db.Decimal(65, 2) @map("monthly_delta")
+  monthlyLastTotal Decimal? @db.Decimal(65, 2) @map("monthly_lasttotal")
+  monthlyTimestamp Decimal? @db.Decimal(65, 2) @map("monthly_timestamp")
+  yearlyDelta      Decimal? @db.Decimal(65, 2) @map("yearly_delta")
+  yearlyLastTotal  Decimal? @db.Decimal(65, 2) @map("yearly_lasttotal")
+  yearlyTimestamp  Decimal? @db.Decimal(65, 2) @map("yearly_timestamp")
+  nameCache         String?  @db.VarChar(16) @map("namecache")
+  prefixcache       String?  @db.VarChar(1024)
+  suffixcache       String?  @db.VarChar(1024)
+  displayNameCache  String?  @db.VarChar(2048) @map("displaynamecache") 
+
+  @@index([dailyTimestamp], map: "daily_timestamp")
+  @@index([hourlyTimestamp], map: "hourly_timestamp")
+  @@index([monthlyTimestamp], map: "monthly_timestamp")
+  @@index([weeklyTimestamp], map: "weekly_timestamp")
+  @@index([yearlyTimestamp], map: "yearly_timestamp")
+
+  @@map("ajlb_deluxecombat_ranking_points")
+}
+
+
+model RankingRubi {
+  uuid                String   @id @db.VarChar(36) @map("id")
+  value             Decimal? @db.Decimal(65, 2)
+  hourlyDelta      Decimal? @db.Decimal(65, 2) @map("hourly_delta")
+  hourlyLastTotal  Decimal? @db.Decimal(65, 2) @map("hourly_lasttotal")
+  hourlyTimestamp  Decimal? @db.Decimal(65, 2) @map("hourly_timestamp")
+  dailyDelta       Decimal? @db.Decimal(65, 2) @map("daily_delta")
+  dailyLastTotal   Decimal? @db.Decimal(65, 2) @map("daily_lasttotal")
+  dailyTimestamp   Decimal? @db.Decimal(65, 2) @map("daily_timestamp")
+  weeklyDelta      Decimal? @db.Decimal(65, 2) @map("weekly_delta")
+  weeklyLastTotal  Decimal? @db.Decimal(65, 2) @map("weekly_lasttotal")
+  weeklyTimestamp  Decimal? @db.Decimal(65, 2) @map("weekly_timestamp")
+  monthlyDelta     Decimal? @db.Decimal(65, 2) @map("monthly_delta")
+  monthlyLastTotal Decimal? @db.Decimal(65, 2) @map("monthly_lasttotal")
+  monthlyTimestamp Decimal? @db.Decimal(65, 2) @map("monthly_timestamp")
+  yearlyDelta      Decimal? @db.Decimal(65, 2) @map("yearly_delta")
+  yearlyLastTotal  Decimal? @db.Decimal(65, 2) @map("yearly_lasttotal")
+  yearlyTimestamp  Decimal? @db.Decimal(65, 2) @map("yearly_timestamp")
+  nameCache         String?  @db.VarChar(16) @map("namecache")
+  prefixcache       String?  @db.VarChar(1024)
+  suffixcache       String?  @db.VarChar(1024)
+  displayNameCache  String?  @db.VarChar(2048) @map("displaynamecache") 
+
+  @@index([dailyTimestamp], map: "daily_timestamp")
+  @@index([hourlyTimestamp], map: "hourly_timestamp")
+  @@index([monthlyTimestamp], map: "monthly_timestamp")
+  @@index([weeklyTimestamp], map: "weekly_timestamp")
+  @@index([yearlyTimestamp], map: "yearly_timestamp")
+
+  @@map("ajlb_playerpoints_points")
+}
+
+model RankingKoth {
+  uuid                String   @id @db.VarChar(36) @map("id")
+  value             Decimal? @db.Decimal(65, 2)
+  hourlyDelta      Decimal? @db.Decimal(65, 2) @map("hourly_delta")
+  hourlyLastTotal  Decimal? @db.Decimal(65, 2) @map("hourly_lasttotal")
+  hourlyTimestamp  Decimal? @db.Decimal(65, 2) @map("hourly_timestamp")
+  dailyDelta       Decimal? @db.Decimal(65, 2) @map("daily_delta")
+  dailyLastTotal   Decimal? @db.Decimal(65, 2) @map("daily_lasttotal")
+  dailyTimestamp   Decimal? @db.Decimal(65, 2) @map("daily_timestamp")
+  weeklyDelta      Decimal? @db.Decimal(65, 2) @map("weekly_delta")
+  weeklyLastTotal  Decimal? @db.Decimal(65, 2) @map("weekly_lasttotal")
+  weeklyTimestamp  Decimal? @db.Decimal(65, 2) @map("weekly_timestamp")
+  monthlyDelta     Decimal? @db.Decimal(65, 2) @map("monthly_delta")
+  monthlyLastTotal Decimal? @db.Decimal(65, 2) @map("monthly_lasttotal")
+  monthlyTimestamp Decimal? @db.Decimal(65, 2) @map("monthly_timestamp")
+  yearlyDelta      Decimal? @db.Decimal(65, 2) @map("yearly_delta")
+  yearlyLastTotal  Decimal? @db.Decimal(65, 2) @map("yearly_lasttotal")
+  yearlyTimestamp  Decimal? @db.Decimal(65, 2) @map("yearly_timestamp")
+  nameCache         String?  @db.VarChar(16) @map("namecache")
+  prefixcache       String?  @db.VarChar(1024)
+  suffixcache       String?  @db.VarChar(1024)
+  displayNameCache  String?  @db.VarChar(2048) @map("displaynamecache") 
+
+  @@index([dailyTimestamp], map: "daily_timestamp")
+  @@index([hourlyTimestamp], map: "hourly_timestamp")
+  @@index([monthlyTimestamp], map: "monthly_timestamp")
+  @@index([weeklyTimestamp], map: "weekly_timestamp")
+  @@index([yearlyTimestamp], map: "yearly_timestamp")
+
+  @@map("ajlb_zkothdata_total_wins")
+}
+
+
+model PlayerRubi {
+  id     Int    @id @default(autoincrement())
+  uuid   String @unique(map: "uuid") @db.VarChar(36)
+  points Int
+
+  @@map("playerpoints_points")
+}
+
+
+model PlayerKoth {
+  uuid       String       @id @db.VarChar(36)
+  name       String       @db.VarChar(16)
+  last_seen  DateTime?    @default(now()) @db.Timestamp(0) 
+  kothStats PlayerKothStat[]
+  koth_wins  koth_wins[] @ignore
+
+  @@map("koth_players")
+}
+
+model PlayerKothStat {
+  uuid  String       @db.VarChar(36) @map("player_uuid")
+  kothName    String       @db.VarChar(64) @map("koth_name")
+  wins         Int?         @default(0)
+  kothPlayers PlayerKoth @relation(fields: [uuid], references: [uuid], onDelete: Cascade, onUpdate: NoAction, map: "koth_stats_ibfk_1")
+
+  @@id([uuid, kothName])
+  @@map("koth_stats")
+}
+
+model koth_wins {
+  id           Int          @id @default(autoincrement())
+  player_uuid  String       @db.VarChar(36)
+  koth_name    String       @db.VarChar(64)
+  win_time     DateTime?    @default(now()) @db.Timestamp(0)
+  koth_players PlayerKoth @relation(fields: [player_uuid], references: [uuid], onDelete: Cascade, onUpdate: NoAction, map: "koth_wins_ibfk_1")
+
+  @@index([player_uuid], map: "player_uuid")
+
+  @@ignore
+}
+
+
+
+
+// Ignored Section
+
+
+model DELUXECOMBAT_PLAYERLIST {
+  ID                         Int                          @id @default(autoincrement())
+  UUID                       String?                      @db.VarChar(64)
+  NAME                       String?                      @db.VarChar(64)
+  SERVER_GROUP               String?                      @db.VarChar(255)
+  DELUXECOMBAT_BOUNTIES      DELUXECOMBAT_BOUNTIES[]      @ignore
+  DELUXECOMBAT_PLAYEROPTIONS DELUXECOMBAT_PLAYEROPTIONS[] @ignore
+  DELUXECOMBAT_STATS         DELUXECOMBAT_STATS[]         @ignore
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model DELUXECOMBAT_PLAYEROPTIONS {
+  ID                      Int
+  DATA                    String?                 @db.Text
+  DELUXECOMBAT_PLAYERLIST DELUXECOMBAT_PLAYERLIST @relation(fields: [ID], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "DELUXECOMBAT_PLAYEROPTIONS_ibfk_1")
+
+  @@index([ID], map: "ID")
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model DELUXECOMBAT_STATS {
+  ID                      Int
+  KILLS                   Int?
+  DEATHS                  Int?
+  KD                      Float?
+  COMBATLOGS              Int?
+  STREAK                  Int?
+  MAX_STREAK              Int?
+  POINTS                  Int?
+  DELUXECOMBAT_PLAYERLIST DELUXECOMBAT_PLAYERLIST @relation(fields: [ID], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "DELUXECOMBAT_STATS_ibfk_1")
+
+  @@index([ID], map: "ID")
+  @@ignore
+}
+
+model litebans_bans {
+  id                BigInt    @id @unique(map: "id") @default(autoincrement()) @db.UnsignedBigInt
+  uuid              String?   @db.VarChar(36)
+  ip                String?   @db.VarChar(45)
+  reason            String?   @db.VarChar(2048)
+  banned_by_uuid    String    @db.VarChar(36)
+  banned_by_name    String?   @db.VarChar(128)
+  removed_by_uuid   String?   @db.VarChar(36)
+  removed_by_name   String?   @db.VarChar(128)
+  removed_by_reason String?   @db.VarChar(2048)
+  removed_by_date   DateTime? @db.Timestamp(0)
+  time              BigInt
+  until             BigInt
+  template          Int       @default(255) @db.UnsignedTinyInt
+  server_scope      String?   @db.VarChar(32)
+  server_origin     String?   @db.VarChar(32)
+  silent            Boolean   @db.Bit(1)
+  ipban             Boolean   @db.Bit(1)
+  ipban_wildcard    Boolean   @default(dbgenerated("b'0'")) @db.Bit(1)
+  active            Boolean   @db.Bit(1)
+
+  @@index([active], map: "idx_litebans_bans_active")
+  @@index([banned_by_uuid], map: "idx_litebans_bans_banned_by_uuid")
+  @@index([ip], map: "idx_litebans_bans_ip")
+  @@index([ipban], map: "idx_litebans_bans_ipban")
+  @@index([ipban_wildcard], map: "idx_litebans_bans_ipban_wildcard")
+  @@index([template], map: "idx_litebans_bans_template")
+  @@index([time], map: "idx_litebans_bans_time")
+  @@index([until], map: "idx_litebans_bans_until")
+  @@index([uuid], map: "idx_litebans_bans_uuid")
+  @@ignore
+}
+
+
+model playerpoints_username_cache {
+  uuid     String @unique(map: "uuid") @db.VarChar(36)
+  username String @db.VarChar(30)
+
+  @@index([username], map: "playerpoints_username_cache_username_index")
+  @@index([uuid], map: "playerpoints_username_cache_uuid_index")
+  @@ignore
+}
+
+model sr_cache {
+  name      String  @id @db.VarChar(16)
+  uuid      String? @db.VarChar(36)
+  timestamp BigInt
+  @@ignore
+}
+
+
+model sr_players {
+  uuid            String  @id @db.VarChar(36)
+  skin_identifier String? @db.VarChar(2083)
+  skin_variant    String? @db.VarChar(20)
+  skin_type       String? @db.VarChar(20)
+  @@ignore
+}
+
+model sr_url_skins {
+  url          String  @id @db.VarChar(266)
+  mine_skin_id String? @db.VarChar(36)
+  value        String  @db.Text
+  signature    String  @db.Text
+  skin_variant String? @db.VarChar(20)
+  @@ignore
+}
+
+
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model DELUXECOMBAT_BOUNTIES {
+  ID                      Int
+  DATA                    String?                 @db.Text
+  DELUXECOMBAT_PLAYERLIST DELUXECOMBAT_PLAYERLIST @relation(fields: [ID], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "DELUXECOMBAT_BOUNTIES_ibfk_1")
+
+  @@index([ID], map: "ID")
+  @@ignore
+}
+
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model ajlb_extras {
+  id          String? @db.VarChar(36)
+  placeholder String? @db.VarChar(255)
+  value       String? @db.VarChar(2048)
+
+  @@ignore
+}
+
+
+
+
+
+model litebans_allow {
+  id   BigInt @id @unique(map: "id") @default(autoincrement()) @db.UnsignedBigInt
+  uuid Bytes  @db.Binary(16)
+  type Int    @db.UnsignedTinyInt
+  @@ignore
+}
+
+model litebans_config {
+  id       BigInt @id @unique(map: "id") @default(autoincrement()) @db.UnsignedBigInt
+  version  String @db.VarChar(128)
+  build    String @db.VarChar(128)
+  timezone String @default("+00:00") @db.VarChar(64)
+  accept   Int    @default(0) @db.UnsignedTinyInt
+  @@ignore
+}
+
+model litebans_history {
+  id   BigInt    @id @unique(map: "id") @default(autoincrement()) @db.UnsignedBigInt
+  date DateTime? @default(now()) @db.Timestamp(0)
+  name String?   @db.VarChar(16)
+  uuid String?   @db.VarChar(36)
+  ip   String?   @db.VarChar(45)
+
+  @@index([ip], map: "idx_litebans_history_ip")
+  @@index([name], map: "idx_litebans_history_name")
+  @@index([uuid], map: "idx_litebans_history_uuid")
+  @@ignore
+}
+
+model litebans_kicks {
+  id             BigInt  @id @unique(map: "id") @default(autoincrement()) @db.UnsignedBigInt
+  uuid           String? @db.VarChar(36)
+  ip             String? @db.VarChar(45)
+  reason         String? @db.VarChar(2048)
+  banned_by_uuid String  @db.VarChar(36)
+  banned_by_name String? @db.VarChar(128)
+  time           BigInt
+  until          BigInt
+  template       Int     @default(255) @db.UnsignedTinyInt
+  server_scope   String? @db.VarChar(32)
+  server_origin  String? @db.VarChar(32)
+  silent         Boolean @db.Bit(1)
+  ipban          Boolean @db.Bit(1)
+  ipban_wildcard Boolean @default(dbgenerated("b'0'")) @db.Bit(1)
+  active         Boolean @db.Bit(1)
+
+  @@index([active], map: "idx_litebans_kicks_active")
+  @@index([banned_by_uuid], map: "idx_litebans_kicks_banned_by_uuid")
+  @@index([ip], map: "idx_litebans_kicks_ip")
+  @@index([ipban], map: "idx_litebans_kicks_ipban")
+  @@index([ipban_wildcard], map: "idx_litebans_kicks_ipban_wildcard")
+  @@index([template], map: "idx_litebans_kicks_template")
+  @@index([time], map: "idx_litebans_kicks_time")
+  @@index([until], map: "idx_litebans_kicks_until")
+  @@index([uuid], map: "idx_litebans_kicks_uuid")
+  @@ignore
+}
+
+model litebans_mutes {
+  id                BigInt    @id @unique(map: "id") @default(autoincrement()) @db.UnsignedBigInt
+  uuid              String?   @db.VarChar(36)
+  ip                String?   @db.VarChar(45)
+  reason            String?   @db.VarChar(2048)
+  banned_by_uuid    String    @db.VarChar(36)
+  banned_by_name    String?   @db.VarChar(128)
+  removed_by_uuid   String?   @db.VarChar(36)
+  removed_by_name   String?   @db.VarChar(128)
+  removed_by_reason String?   @db.VarChar(2048)
+  removed_by_date   DateTime? @db.Timestamp(0)
+  time              BigInt
+  until             BigInt
+  template          Int       @default(255) @db.UnsignedTinyInt
+  server_scope      String?   @db.VarChar(32)
+  server_origin     String?   @db.VarChar(32)
+  silent            Boolean   @db.Bit(1)
+  ipban             Boolean   @db.Bit(1)
+  ipban_wildcard    Boolean   @default(dbgenerated("b'0'")) @db.Bit(1)
+  active            Boolean   @db.Bit(1)
+
+  @@index([active], map: "idx_litebans_mutes_active")
+  @@index([banned_by_uuid], map: "idx_litebans_mutes_banned_by_uuid")
+  @@index([ip], map: "idx_litebans_mutes_ip")
+  @@index([ipban], map: "idx_litebans_mutes_ipban")
+  @@index([ipban_wildcard], map: "idx_litebans_mutes_ipban_wildcard")
+  @@index([template], map: "idx_litebans_mutes_template")
+  @@index([time], map: "idx_litebans_mutes_time")
+  @@index([until], map: "idx_litebans_mutes_until")
+  @@index([uuid], map: "idx_litebans_mutes_uuid")
+    @@ignore
+}
+
+model litebans_servers {
+  id   BigInt    @id @unique(map: "id") @default(autoincrement()) @db.UnsignedBigInt
+  name String    @db.VarChar(32)
+  uuid String    @db.VarChar(32)
+  date DateTime? @default(now()) @db.Timestamp(0)
+    @@ignore
+}
+
+model litebans_sync {
+  id   BigInt    @id @unique(map: "id") @default(autoincrement()) @db.UnsignedBigInt
+  info Int       @db.UnsignedInt
+  msg  String    @db.VarChar(4096)
+  time DateTime? @default(now()) @db.Timestamp(0)
+    @@ignore
+}
+
+model litebans_warnings {
+  id                BigInt    @id @unique(map: "id") @default(autoincrement()) @db.UnsignedBigInt
+  uuid              String?   @db.VarChar(36)
+  ip                String?   @db.VarChar(45)
+  reason            String?   @db.VarChar(2048)
+  banned_by_uuid    String    @db.VarChar(36)
+  banned_by_name    String?   @db.VarChar(128)
+  removed_by_uuid   String?   @db.VarChar(36)
+  removed_by_name   String?   @db.VarChar(128)
+  removed_by_reason String?   @db.VarChar(2048)
+  removed_by_date   DateTime? @db.Timestamp(0)
+  time              BigInt
+  until             BigInt
+  template          Int       @default(255) @db.UnsignedTinyInt
+  server_scope      String?   @db.VarChar(32)
+  server_origin     String?   @db.VarChar(32)
+  silent            Boolean   @db.Bit(1)
+  ipban             Boolean   @db.Bit(1)
+  ipban_wildcard    Boolean   @default(dbgenerated("b'0'")) @db.Bit(1)
+  active            Boolean   @db.Bit(1)
+  warned            Boolean   @db.Bit(1)
+
+  @@index([active], map: "idx_litebans_warnings_active")
+  @@index([banned_by_uuid], map: "idx_litebans_warnings_banned_by_uuid")
+  @@index([ip], map: "idx_litebans_warnings_ip")
+  @@index([ipban], map: "idx_litebans_warnings_ipban")
+  @@index([ipban_wildcard], map: "idx_litebans_warnings_ipban_wildcard")
+  @@index([template], map: "idx_litebans_warnings_template")
+  @@index([time], map: "idx_litebans_warnings_time")
+  @@index([until], map: "idx_litebans_warnings_until")
+  @@index([uuid], map: "idx_litebans_warnings_uuid")
+  @@ignore
+}
+
+model luckperms_actions {
+  id         Int    @id @default(autoincrement())
+  time       BigInt
+  actor_uuid String @db.VarChar(36)
+  actor_name String @db.VarChar(100)
+  type       String @db.Char(1)
+  acted_uuid String @db.VarChar(36)
+  acted_name String @db.VarChar(36)
+  action     String @db.VarChar(300)
+    @@ignore
+}
+
+model luckperms_group_permissions {
+  id         Int     @id @default(autoincrement())
+  name       String  @db.VarChar(36)
+  permission String  @db.VarChar(200)
+  value      Boolean
+  server     String  @db.VarChar(36)
+  world      String  @db.VarChar(64)
+  expiry     BigInt
+  contexts   String  @db.VarChar(200)
+
+  @@index([name], map: "luckperms_group_permissions_name")
+    @@ignore
+}
+
+model luckperms_messenger {
+  id   Int      @id @default(autoincrement())
+  time DateTime @db.Timestamp(0)
+  msg  String   @db.Text
+    @@ignore
+}
+
+model luckperms_tracks {
+  name   String @id @db.VarChar(36)
+  groups String @db.Text
+    @@ignore
+}
+
+model luckperms_user_permissions {
+  id         Int     @id @default(autoincrement())
+  uuid       String  @db.VarChar(36)
+  permission String  @db.VarChar(200)
+  value      Boolean
+  server     String  @db.VarChar(36)
+  world      String  @db.VarChar(64)
+  expiry     BigInt
+  contexts   String  @db.VarChar(200)
+
+  @@index([uuid], map: "luckperms_user_permissions_uuid")
+    @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model playerpoints_migrations {
+  migration_version Int
+
+  @@ignore
+}
+
+model preferences {
+  VAR  String  @id @db.VarChar(100)
+  VALS String? @db.VarChar(5000)
+    @@ignore
+}
+
+model sr_cooldowns {
+  uuid          String @db.VarChar(36)
+  group_name    String @db.VarChar(36)
+  creation_time BigInt
+  duration      BigInt
+
+  @@id([uuid, group_name])
+    @@ignore
+}
+
+model sr_custom_skins {
+  name         String  @id @db.VarChar(36)
+  display_name String? @db.Text
+  value        String  @db.Text
+  signature    String  @db.Text
+    @@ignore
+}
+
+model sr_player_favourites {
+  uuid            String  @db.VarChar(36)
+  timestamp       BigInt
+  skin_identifier String  @db.VarChar(2083)
+  skin_variant    String? @db.VarChar(20)
+  skin_type       String  @db.VarChar(20)
+
+  @@id([uuid, timestamp])
+    @@ignore
+}
+
+model sr_player_history {
+  uuid            String  @db.VarChar(36)
+  timestamp       BigInt
+  skin_identifier String  @db.VarChar(2083)
+  skin_variant    String? @db.VarChar(20)
+  skin_type       String  @db.VarChar(20)
+
+  @@id([uuid, timestamp])
+    @@ignore
+}
+
+model sr_url_index {
+  url          String  @id @db.VarChar(266)
+  skin_variant String? @db.VarChar(20)
+    @@ignore
+}
+
+model violations {
+  ID      String  @id @db.VarChar(32)
+  UUID    String? @db.VarChar(100)
+  DATE    String? @db.VarChar(20)
+  TYPE    String? @db.VarChar(100)
+  CONTEXT String? @db.VarChar(50)
+  CONTENT String? @db.VarChar(300)
+    @@ignore
+}
+
+model warnings {
+  ID          String  @id @db.VarChar(32)
+  UUID        String? @db.VarChar(100)
+  MODULE      String? @db.VarChar(100)
+  COUNT       String? @db.VarChar(50)
+  NEXT_EXPIRY String? @db.VarChar(25)
+    @@ignore
+}

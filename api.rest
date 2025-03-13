@@ -1,0 +1,13 @@
+### Get Example
+GET http://localhost:3000/player
+Accept: application/json
+
+### Get Example
+GET http://localhost:3000/player/72442e30864337d2a4f55b3c94a704a8
+Accept: application/json
+
+### Get Example
+GET http://localhost:3000/player/72442e30864337d2a4f55b3c94a704a8
+Accept: application/json
+
+

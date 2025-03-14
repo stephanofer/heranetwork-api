@@ -24,7 +24,6 @@ model UserProfile {
   firstAddress      String?   @db.VarChar(40)
   firstSeen         DateTime? @db.Timestamp(0)
 
-  rankingLevel RankingLevel? 
 
 
   @@map("user_profiles")
@@ -79,7 +78,6 @@ model RankingLevel {
   suffixcache       String?  @db.VarChar(1024)
   displayNameCache  String?  @db.VarChar(2048) @map("displaynamecache")  
 
-  userProfile UserProfile? @relation(fields: [uuid], references: [uuid])  
 
   @@index([dailyTimestamp], map: "daily_timestamp")
   @@index([hourlyTimestamp], map: "hourly_timestamp")

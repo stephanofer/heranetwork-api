@@ -46,6 +46,11 @@ GET http://localhost:3000/api/v1/rpg/players/72442e30-8643-37d2-a4f5-5b3c94a704a
 Accept: application/json
 
 ### Get Example
-GET http://localhost:3000/api/v1/rpg/leaderboards?type=kill&order=desc
+GET http://localhost:3000/api/v1/rpg/leaderboards?type=kill
+Accept: application/json
+
+
+### Get Example
+GET http://localhost:3000/api/v1/players/72442e30-8643-37d2-a4f5-5b3c94a704a8
 Accept: application/json
 

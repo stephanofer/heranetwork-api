@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { LeaderBoardsServiceRPG } from '../services/leaderboard.rpg.service';
 import { LeaderboardQueryDto } from '../dto/leaderboard-query.dto';
 import { ResponseService } from '@/shared/response/response.service';

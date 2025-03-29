@@ -11,22 +11,16 @@ export class LeaderBoardsServiceRPG {
   async getLeaderboardByType(
     query: LeaderboardQueryDto,
   ): Promise<LeaderboardEntry[]> {
-    const { type, order = 'desc' } = query;
+    const { type } = query;
+
     try {
-      return await this.fetchLeaderboardByType(type, { order });
+      return await this.fetchLeaderboardByType(type);
     } catch (error) {
       console.log(error);
     }
   }
 
-  async fetchLeaderboardByType(
-    type: StatType,
-    options: { order: string },
-  ): Promise<LeaderboardEntry[]> {
-    const { order } = options;
-
-    const orderDiretion = order === 'asc' ? 'asc' : 'desc';
-
+  async fetchLeaderboardByType(type: StatType): Promise<LeaderboardEntry[]> {
     switch (type) {
       case StatType.KILL:
         const kills = await this.prisma.rankingKill.findMany({
@@ -39,7 +33,15 @@ export class LeaderBoardsServiceRPG {
             },
           },
           orderBy: {
-            value: orderDiretion,
+            value: 'desc',
+          },
+          select: {
+            uuid: true,
+            nameCache: true,
+            value: true,
+            dailyDelta: true,
+            dailyLastTotal: true,
+            dailyTimestamp: true,
           },
         });
 
@@ -48,6 +50,8 @@ export class LeaderBoardsServiceRPG {
           playerName: entry.nameCache,
           value: entry.value.toNumber(),
           dailyDelta: entry.dailyDelta.toNumber(),
+          dailyLastTotal: entry.dailyLastTotal.toNumber(),
+          dailyTimestamp: entry.dailyTimestamp.toNumber(),
         }));
 
       case StatType.DEATH:
@@ -60,15 +64,23 @@ export class LeaderBoardsServiceRPG {
               not: null,
             },
           },
-          orderBy: {
-            value: orderDiretion,
+          select: {
+            uuid: true,
+            nameCache: true,
+            value: true,
+            dailyDelta: true,
+            dailyLastTotal: true,
+            dailyTimestamp: true,
           },
         });
+
         return deaths.map((entry) => ({
           uuid: entry.uuid,
           playerName: entry.nameCache,
           value: entry.value.toNumber(),
           dailyDelta: entry.dailyDelta.toNumber(),
+          dailyLastTotal: entry.dailyLastTotal.toNumber(),
+          dailyTimestamp: entry.dailyTimestamp.toNumber(),
         }));
 
       case StatType.KD:
@@ -82,14 +94,25 @@ export class LeaderBoardsServiceRPG {
             },
           },
           orderBy: {
-            value: orderDiretion,
+            value: 'desc',
+          },
+          select: {
+            uuid: true,
+            nameCache: true,
+            value: true,
+            dailyDelta: true,
+            dailyLastTotal: true,
+            dailyTimestamp: true,
           },
         });
+
         return kds.map((entry) => ({
           uuid: entry.uuid,
           playerName: entry.nameCache,
           value: entry.value.toNumber(),
           dailyDelta: entry.dailyDelta.toNumber(),
+          dailyLastTotal: entry.dailyLastTotal.toNumber(),
+          dailyTimestamp: entry.dailyTimestamp.toNumber(),
         }));
 
       case StatType.LEVEL:
@@ -103,14 +126,25 @@ export class LeaderBoardsServiceRPG {
             },
           },
           orderBy: {
-            value: orderDiretion,
+            value: 'desc',
+          },
+          select: {
+            uuid: true,
+            nameCache: true,
+            value: true,
+            dailyDelta: true,
+            dailyLastTotal: true,
+            dailyTimestamp: true,
           },
         });
+
         return levels.map((entry) => ({
           uuid: entry.uuid,
           playerName: entry.nameCache,
           value: entry.value.toNumber(),
           dailyDelta: entry.dailyDelta.toNumber(),
+          dailyLastTotal: entry.dailyLastTotal.toNumber(),
+          dailyTimestamp: entry.dailyTimestamp.toNumber(),
         }));
 
       case StatType.MAX_STREAK:
@@ -124,14 +158,25 @@ export class LeaderBoardsServiceRPG {
             },
           },
           orderBy: {
-            value: orderDiretion,
+            value: 'desc',
+          },
+          select: {
+            uuid: true,
+            nameCache: true,
+            value: true,
+            dailyDelta: true,
+            dailyLastTotal: true,
+            dailyTimestamp: true,
           },
         });
+
         return maxStreaks.map((entry) => ({
           uuid: entry.uuid,
           playerName: entry.nameCache,
           value: entry.value.toNumber(),
           dailyDelta: entry.dailyDelta.toNumber(),
+          dailyLastTotal: entry.dailyLastTotal.toNumber(),
+          dailyTimestamp: entry.dailyTimestamp.toNumber(),
         }));
 
       case StatType.ELO:
@@ -145,14 +190,25 @@ export class LeaderBoardsServiceRPG {
             },
           },
           orderBy: {
-            value: orderDiretion,
+            value: 'desc',
+          },
+          select: {
+            uuid: true,
+            nameCache: true,
+            value: true,
+            dailyDelta: true,
+            dailyLastTotal: true,
+            dailyTimestamp: true,
           },
         });
+
         return elos.map((entry) => ({
           uuid: entry.uuid,
           playerName: entry.nameCache,
           value: entry.value.toNumber(),
           dailyDelta: entry.dailyDelta.toNumber(),
+          dailyLastTotal: entry.dailyLastTotal.toNumber(),
+          dailyTimestamp: entry.dailyTimestamp.toNumber(),
         }));
 
       case StatType.KOTH:
@@ -166,14 +222,25 @@ export class LeaderBoardsServiceRPG {
             },
           },
           orderBy: {
-            value: orderDiretion,
+            value: 'desc',
+          },
+          select: {
+            uuid: true,
+            nameCache: true,
+            value: true,
+            dailyDelta: true,
+            dailyLastTotal: true,
+            dailyTimestamp: true,
           },
         });
+
         return koths.map((entry) => ({
           uuid: entry.uuid,
           playerName: entry.nameCache,
           value: entry.value.toNumber(),
           dailyDelta: entry.dailyDelta.toNumber(),
+          dailyLastTotal: entry.dailyLastTotal.toNumber(),
+          dailyTimestamp: entry.dailyTimestamp.toNumber(),
         }));
 
       default:

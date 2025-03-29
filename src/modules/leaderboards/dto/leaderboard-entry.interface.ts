@@ -3,4 +3,6 @@ export interface LeaderboardEntry {
   playerName: string;
   value: number;
   dailyDelta: number;
+  dailyLastTotal: number;
+  dailyTimestamp: number;
 }

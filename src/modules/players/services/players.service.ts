@@ -2,6 +2,7 @@ import { RpgService } from '@/databases/rpgdb/rpgdb.service';
 import { Injectable } from '@nestjs/common';
 import { PlayersRPGService } from './players.rpg.service';
 import { PlayersSurvi21Service } from './players.survi21.service';
+import { UserProfile } from '../dto/userProfile.dto';
 
 @Injectable()
 export class PlayersService {
@@ -11,18 +12,41 @@ export class PlayersService {
     private playersSurvi21Service: PlayersSurvi21Service,
   ) {}
 
-  findAll() {
-    return `This action returns all players`;
+  formatUUID(uuid: string): string {
+    return uuid.replace(/-/g, '');
   }
 
-  async findOne(id: string) {
-    const rpg = await this.playersRPGService.findOne(id);
-    const survi21 = await this.playersSurvi21Service.findOne(id);
+  async fetchDetailsAccount(uuid: string): Promise<UserProfile> {
+    const formattedUUID = this.formatUUID(uuid);
 
-    const result = {
-      rpg,
-      survi21,
-    };
-    return result;
+    try {
+      const userProfile = await this.prisma.userProfile.findUnique({
+        where: {
+          uuid: formattedUUID,
+        },
+        select: {
+          uuid: true,
+          lastNickname: true,
+          lastServer: true,
+          lastSeen: true,
+          firstSeen: true,
+        },
+      });
+
+      const userRank = await this.prisma.playerRankNetwork.findUnique({
+        where: {
+          uuid,
+        },
+      });
+
+      const formattedUser = {
+        ...userProfile,
+        primaryGroup: userRank.primaryGroup,
+      };
+
+      return formattedUser;
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

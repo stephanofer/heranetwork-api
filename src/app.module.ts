@@ -6,6 +6,8 @@ import { Survi21dbModule } from '@/databases/survi21db/survi21db.module';
 import { LeaderboardsModule } from './modules/leaderboards/leaderboards.module';
 import { PlayersModule } from './modules/players/players.module';
 import { ResponseModule } from './shared/response/response.module';
+import { APP_FILTER } from '@nestjs/core';
+import { HttpExceptionFilter } from './http-exception.filter';
 
 @Module({
   imports: [
@@ -16,6 +18,12 @@ import { ResponseModule } from './shared/response/response.module';
     ResponseModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}

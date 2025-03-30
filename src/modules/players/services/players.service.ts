@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PlayersRPGService } from './players.rpg.service';
 import { PlayersSurvi21Service } from './players.survi21.service';
 import { UserProfile } from '../dto/userProfile.dto';
+import { formatUUID } from '@/shared/utils/uuid.util';
 
 @Injectable()
 export class PlayersService {
@@ -12,12 +13,8 @@ export class PlayersService {
     private playersSurvi21Service: PlayersSurvi21Service,
   ) {}
 
-  formatUUID(uuid: string): string {
-    return uuid.replace(/-/g, '');
-  }
-
   async fetchDetailsAccount(uuid: string): Promise<UserProfile> {
-    const formattedUUID = this.formatUUID(uuid);
+    const formattedUUID = formatUUID(uuid);
 
     try {
       const userProfile = await this.prisma.userProfile.findUnique({

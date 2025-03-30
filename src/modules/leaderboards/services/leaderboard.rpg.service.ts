@@ -3,6 +3,14 @@ import { RpgService } from '@/databases/rpgdb/rpgdb.service';
 import { StatType } from '@/shared/interfaces/stats.interface';
 import { LeaderboardQueryDto } from '../dto/leaderboard-query.dto';
 import { LeaderboardEntry } from '../dto/leaderboard-entry.interface';
+import {
+  InvalidLeaderboardTypeException,
+  LeaderboardDataException,
+} from '../exceptions/leaderboard.exceptions';
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
+} from '@prisma/client/runtime/library';
 
 @Injectable()
 export class LeaderBoardsServiceRPG {
@@ -16,7 +24,22 @@ export class LeaderBoardsServiceRPG {
     try {
       return await this.fetchLeaderboardByType(type);
     } catch (error) {
-      console.log(error);
+      if (error instanceof InvalidLeaderboardTypeException) {
+        throw error;
+      }
+
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new LeaderboardDataException(`Database error: ${error.code}`);
+      }
+
+      if (error instanceof PrismaClientValidationError) {
+        throw new LeaderboardDataException('Database validation error');
+      }
+
+      throw new LeaderboardDataException(
+        'Failed to retrieve leaderboard data',
+        error,
+      );
     }
   }
 
@@ -45,7 +68,8 @@ export class LeaderBoardsServiceRPG {
           },
         });
 
-        return kills.map((entry) => ({
+        return kills.map((entry, index) => ({
+          rank: index + 1,
           uuid: entry.uuid,
           playerName: entry.nameCache,
           value: entry.value.toNumber(),
@@ -64,6 +88,9 @@ export class LeaderBoardsServiceRPG {
               not: null,
             },
           },
+          orderBy: {
+            value: 'desc',
+          },
           select: {
             uuid: true,
             nameCache: true,
@@ -74,7 +101,8 @@ export class LeaderBoardsServiceRPG {
           },
         });
 
-        return deaths.map((entry) => ({
+        return deaths.map((entry, index) => ({
+          rank: index + 1,
           uuid: entry.uuid,
           playerName: entry.nameCache,
           value: entry.value.toNumber(),
@@ -106,7 +134,8 @@ export class LeaderBoardsServiceRPG {
           },
         });
 
-        return kds.map((entry) => ({
+        return kds.map((entry, index) => ({
+          rank: index + 1,
           uuid: entry.uuid,
           playerName: entry.nameCache,
           value: entry.value.toNumber(),
@@ -138,7 +167,8 @@ export class LeaderBoardsServiceRPG {
           },
         });
 
-        return levels.map((entry) => ({
+        return levels.map((entry, index) => ({
+          rank: index + 1,
           uuid: entry.uuid,
           playerName: entry.nameCache,
           value: entry.value.toNumber(),
@@ -170,7 +200,8 @@ export class LeaderBoardsServiceRPG {
           },
         });
 
-        return maxStreaks.map((entry) => ({
+        return maxStreaks.map((entry, index) => ({
+          rank: index + 1,
           uuid: entry.uuid,
           playerName: entry.nameCache,
           value: entry.value.toNumber(),
@@ -202,7 +233,8 @@ export class LeaderBoardsServiceRPG {
           },
         });
 
-        return elos.map((entry) => ({
+        return elos.map((entry, index) => ({
+          rank: index + 1,
           uuid: entry.uuid,
           playerName: entry.nameCache,
           value: entry.value.toNumber(),
@@ -234,7 +266,8 @@ export class LeaderBoardsServiceRPG {
           },
         });
 
-        return koths.map((entry) => ({
+        return koths.map((entry, index) => ({
+          rank: index + 1,
           uuid: entry.uuid,
           playerName: entry.nameCache,
           value: entry.value.toNumber(),
@@ -244,7 +277,7 @@ export class LeaderBoardsServiceRPG {
         }));
 
       default:
-        throw new Error(`Invalid stat type: ${type}`);
+        throw new InvalidLeaderboardTypeException(type);
     }
   }
 }

@@ -42,10 +42,12 @@ export class PlayersRPGService {
       throw new UserNotFoundException(uuid);
     }
 
-    return {
+    const formattedUser = {
       ...userProfile,
       primaryGroup: userRank.primaryGroup,
     };
+
+    return formattedUser;
   }
 
   async fetchLeaderboardByType(

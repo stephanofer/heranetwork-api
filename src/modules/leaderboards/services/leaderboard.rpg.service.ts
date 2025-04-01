@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { RpgService } from '@/databases/rpgdb/rpgdb.service';
 import { StatType } from '@/shared/interfaces/stats.interface';
-import { LeaderboardQueryDto } from '../dto/leaderboard-query.dto';
 import { LeaderboardEntry } from '../dto/leaderboard-entry.interface';
 import {
   InvalidLeaderboardTypeException,
@@ -16,11 +15,7 @@ import {
 export class LeaderBoardsServiceRPG {
   constructor(private prisma: RpgService) {}
 
-  async getLeaderboardByType(
-    query: LeaderboardQueryDto,
-  ): Promise<LeaderboardEntry[]> {
-    const { type } = query;
-
+  async getLeaderboardByType(type: StatType): Promise<LeaderboardEntry[]> {
     try {
       return await this.fetchLeaderboardByType(type);
     } catch (error) {
@@ -58,6 +53,7 @@ export class LeaderBoardsServiceRPG {
           orderBy: {
             value: 'desc',
           },
+          take: 150,
           select: {
             uuid: true,
             nameCache: true,
@@ -91,6 +87,7 @@ export class LeaderBoardsServiceRPG {
           orderBy: {
             value: 'desc',
           },
+          take: 150,
           select: {
             uuid: true,
             nameCache: true,
@@ -124,6 +121,7 @@ export class LeaderBoardsServiceRPG {
           orderBy: {
             value: 'desc',
           },
+          take: 150,
           select: {
             uuid: true,
             nameCache: true,
@@ -157,6 +155,7 @@ export class LeaderBoardsServiceRPG {
           orderBy: {
             value: 'desc',
           },
+          take: 150,
           select: {
             uuid: true,
             nameCache: true,
@@ -190,6 +189,7 @@ export class LeaderBoardsServiceRPG {
           orderBy: {
             value: 'desc',
           },
+          take: 150,
           select: {
             uuid: true,
             nameCache: true,
@@ -223,6 +223,7 @@ export class LeaderBoardsServiceRPG {
           orderBy: {
             value: 'desc',
           },
+          take: 150,
           select: {
             uuid: true,
             nameCache: true,
@@ -256,6 +257,7 @@ export class LeaderBoardsServiceRPG {
           orderBy: {
             value: 'desc',
           },
+          take: 150,
           select: {
             uuid: true,
             nameCache: true,

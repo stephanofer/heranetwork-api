@@ -39,12 +39,12 @@ export class ResponseService {
   //   };
   // }
 
-  error(message: string, errorCode: string): ApiResponse<null> {
-    return {
-      success: false,
-      data: null,
-      message,
-      timestamp: new Date().toISOString(),
-    };
-  }
+  // error(message: string, errorCode: string): ApiResponse<null> {
+  //   return {
+  //     success: false,
+  //     data: null,
+  //     message,
+  //     timestamp: new Date().toISOString(),
+  //   };
+  // }
 }

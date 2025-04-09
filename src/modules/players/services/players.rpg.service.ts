@@ -29,12 +29,22 @@ export class PlayersRPGService {
         lastServer: true,
         lastSeen: true,
         firstSeen: true,
+        premiumId: true,
       },
     });
 
     const userRank = await this.prisma.playerRankNetwork.findUnique({
       where: {
         uuid,
+      },
+    });
+
+    const userSkin = await this.prisma.userSkinData.findUnique({
+      where: {
+        uuid,
+      },
+      select: {
+        skinIdentifier: true,
       },
     });
 
@@ -45,6 +55,7 @@ export class PlayersRPGService {
     const formattedUser = {
       ...userProfile,
       primaryGroup: userRank.primaryGroup,
+      skinUUID: userSkin ? userSkin.skinIdentifier : null,
     };
 
     return formattedUser;

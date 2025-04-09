@@ -29,14 +29,14 @@ model UserProfile {
   @@map("user_profiles")
 }
 
-model UserSkinData {
-  uuid            String  @id @db.VarChar(36) 
-  lastKnownName  String? @db.VarChar(16) @map("last_known_name")
-  value           String  @db.Text
-  signature       String  @db.Text
-  timestamp       BigInt
 
-  @@map("sr_player_skins")
+model UserSkinData {
+  uuid            String  @id @db.VarChar(36)
+  skinIdentifier String? @db.VarChar(2083) @map("skin_identifier")
+  skin_variant    String? @db.VarChar(20)
+  skin_type       String? @db.VarChar(20)
+
+  @@map("sr_players")
 }
 
 
@@ -449,13 +449,7 @@ model sr_cache {
 }
 
 
-model sr_players {
-  uuid            String  @id @db.VarChar(36)
-  skin_identifier String? @db.VarChar(2083)
-  skin_variant    String? @db.VarChar(20)
-  skin_type       String? @db.VarChar(20)
-  @@ignore
-}
+
 
 model sr_url_skins {
   url          String  @id @db.VarChar(266)

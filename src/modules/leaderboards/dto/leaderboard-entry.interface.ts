@@ -1,7 +1,8 @@
+import { UserProfile } from '@/modules/players/dto/userProfile.dto';
+
 export interface LeaderboardEntry {
   rank: number;
-  uuid: string;
-  playerName: string;
+  userProfile: UserProfile;
   value: number;
   dailyDelta: number;
   dailyLastTotal: number;

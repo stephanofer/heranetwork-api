@@ -10,10 +10,14 @@ import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,
 } from '@prisma/client/runtime/library';
+import { PlayersRPGService } from '@/modules/players/services/players.rpg.service';
 
 @Injectable()
 export class LeaderBoardsServiceRPG {
-  constructor(private prisma: RpgService) {}
+  constructor(
+    private prisma: RpgService,
+    private readonly playersService: PlayersRPGService,
+  ) {}
 
   async getLeaderboardByType(type: StatType): Promise<LeaderboardEntry[]> {
     try {
@@ -64,15 +68,22 @@ export class LeaderBoardsServiceRPG {
           },
         });
 
-        return kills.map((entry, index) => ({
-          rank: index + 1,
-          uuid: entry.uuid,
-          playerName: entry.nameCache,
-          value: entry.value.toNumber(),
-          dailyDelta: entry.dailyDelta.toNumber(),
-          dailyLastTotal: entry.dailyLastTotal.toNumber(),
-          dailyTimestamp: entry.dailyTimestamp.toNumber(),
-        }));
+        return Promise.all(
+          kills.map(async (entry, index) => {
+            const userProfile = await this.playersService.fetchAccountDetail(
+              entry.uuid,
+            );
+
+            return {
+              rank: index + 1,
+              userProfile,
+              value: entry.value.toNumber(),
+              dailyDelta: entry.dailyDelta.toNumber(),
+              dailyLastTotal: entry.dailyLastTotal.toNumber(),
+              dailyTimestamp: entry.dailyTimestamp.toNumber(),
+            };
+          }),
+        );
 
       case StatType.DEATH:
         const deaths = await this.prisma.rankingDeath.findMany({
@@ -98,15 +109,22 @@ export class LeaderBoardsServiceRPG {
           },
         });
 
-        return deaths.map((entry, index) => ({
-          rank: index + 1,
-          uuid: entry.uuid,
-          playerName: entry.nameCache,
-          value: entry.value.toNumber(),
-          dailyDelta: entry.dailyDelta.toNumber(),
-          dailyLastTotal: entry.dailyLastTotal.toNumber(),
-          dailyTimestamp: entry.dailyTimestamp.toNumber(),
-        }));
+        return Promise.all(
+          deaths.map(async (entry, index) => {
+            const userProfile = await this.playersService.fetchAccountDetail(
+              entry.uuid,
+            );
+
+            return {
+              rank: index + 1,
+              userProfile,
+              value: entry.value.toNumber(),
+              dailyDelta: entry.dailyDelta.toNumber(),
+              dailyLastTotal: entry.dailyLastTotal.toNumber(),
+              dailyTimestamp: entry.dailyTimestamp.toNumber(),
+            };
+          }),
+        );
 
       case StatType.KD:
         const kds = await this.prisma.rankingKD.findMany({
@@ -132,15 +150,22 @@ export class LeaderBoardsServiceRPG {
           },
         });
 
-        return kds.map((entry, index) => ({
-          rank: index + 1,
-          uuid: entry.uuid,
-          playerName: entry.nameCache,
-          value: entry.value.toNumber(),
-          dailyDelta: entry.dailyDelta.toNumber(),
-          dailyLastTotal: entry.dailyLastTotal.toNumber(),
-          dailyTimestamp: entry.dailyTimestamp.toNumber(),
-        }));
+        return Promise.all(
+          kds.map(async (entry, index) => {
+            const userProfile = await this.playersService.fetchAccountDetail(
+              entry.uuid,
+            );
+
+            return {
+              rank: index + 1,
+              userProfile,
+              value: entry.value.toNumber(),
+              dailyDelta: entry.dailyDelta.toNumber(),
+              dailyLastTotal: entry.dailyLastTotal.toNumber(),
+              dailyTimestamp: entry.dailyTimestamp.toNumber(),
+            };
+          }),
+        );
 
       case StatType.LEVEL:
         const levels = await this.prisma.rankingLevel.findMany({
@@ -165,16 +190,22 @@ export class LeaderBoardsServiceRPG {
             dailyTimestamp: true,
           },
         });
+        return Promise.all(
+          levels.map(async (entry, index) => {
+            const userProfile = await this.playersService.fetchAccountDetail(
+              entry.uuid,
+            );
 
-        return levels.map((entry, index) => ({
-          rank: index + 1,
-          uuid: entry.uuid,
-          playerName: entry.nameCache,
-          value: entry.value.toNumber(),
-          dailyDelta: entry.dailyDelta.toNumber(),
-          dailyLastTotal: entry.dailyLastTotal.toNumber(),
-          dailyTimestamp: entry.dailyTimestamp.toNumber(),
-        }));
+            return {
+              rank: index + 1,
+              userProfile,
+              value: entry.value.toNumber(),
+              dailyDelta: entry.dailyDelta.toNumber(),
+              dailyLastTotal: entry.dailyLastTotal.toNumber(),
+              dailyTimestamp: entry.dailyTimestamp.toNumber(),
+            };
+          }),
+        );
 
       case StatType.MAX_STREAK:
         const maxStreaks = await this.prisma.rankingMaxStreak.findMany({
@@ -200,15 +231,22 @@ export class LeaderBoardsServiceRPG {
           },
         });
 
-        return maxStreaks.map((entry, index) => ({
-          rank: index + 1,
-          uuid: entry.uuid,
-          playerName: entry.nameCache,
-          value: entry.value.toNumber(),
-          dailyDelta: entry.dailyDelta.toNumber(),
-          dailyLastTotal: entry.dailyLastTotal.toNumber(),
-          dailyTimestamp: entry.dailyTimestamp.toNumber(),
-        }));
+        return Promise.all(
+          maxStreaks.map(async (entry, index) => {
+            const userProfile = await this.playersService.fetchAccountDetail(
+              entry.uuid,
+            );
+
+            return {
+              rank: index + 1,
+              userProfile,
+              value: entry.value.toNumber(),
+              dailyDelta: entry.dailyDelta.toNumber(),
+              dailyLastTotal: entry.dailyLastTotal.toNumber(),
+              dailyTimestamp: entry.dailyTimestamp.toNumber(),
+            };
+          }),
+        );
 
       case StatType.ELO:
         const elos = await this.prisma.rankingElo.findMany({
@@ -234,15 +272,22 @@ export class LeaderBoardsServiceRPG {
           },
         });
 
-        return elos.map((entry, index) => ({
-          rank: index + 1,
-          uuid: entry.uuid,
-          playerName: entry.nameCache,
-          value: entry.value.toNumber(),
-          dailyDelta: entry.dailyDelta.toNumber(),
-          dailyLastTotal: entry.dailyLastTotal.toNumber(),
-          dailyTimestamp: entry.dailyTimestamp.toNumber(),
-        }));
+        return Promise.all(
+          elos.map(async (entry, index) => {
+            const userProfile = await this.playersService.fetchAccountDetail(
+              entry.uuid,
+            );
+
+            return {
+              rank: index + 1,
+              userProfile,
+              value: entry.value.toNumber(),
+              dailyDelta: entry.dailyDelta.toNumber(),
+              dailyLastTotal: entry.dailyLastTotal.toNumber(),
+              dailyTimestamp: entry.dailyTimestamp.toNumber(),
+            };
+          }),
+        );
 
       case StatType.KOTH:
         const koths = await this.prisma.rankingKoth.findMany({
@@ -268,15 +313,22 @@ export class LeaderBoardsServiceRPG {
           },
         });
 
-        return koths.map((entry, index) => ({
-          rank: index + 1,
-          uuid: entry.uuid,
-          playerName: entry.nameCache,
-          value: entry.value.toNumber(),
-          dailyDelta: entry.dailyDelta.toNumber(),
-          dailyLastTotal: entry.dailyLastTotal.toNumber(),
-          dailyTimestamp: entry.dailyTimestamp.toNumber(),
-        }));
+        return Promise.all(
+          koths.map(async (entry, index) => {
+            const userProfile = await this.playersService.fetchAccountDetail(
+              entry.uuid,
+            );
+
+            return {
+              rank: index + 1,
+              userProfile,
+              value: entry.value.toNumber(),
+              dailyDelta: entry.dailyDelta.toNumber(),
+              dailyLastTotal: entry.dailyLastTotal.toNumber(),
+              dailyTimestamp: entry.dailyTimestamp.toNumber(),
+            };
+          }),
+        );
 
       default:
         throw new InvalidLeaderboardTypeException(type);

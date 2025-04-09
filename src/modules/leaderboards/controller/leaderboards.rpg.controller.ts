@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { EnvConfig } from '@/config/env.validation';
 import { LeaderboardEntry } from '../dto/leaderboard-entry.interface';
 import { Response } from 'express';
+import { PlayersRPGService } from '@/modules/players/services/players.rpg.service';
 
 @Controller('rpg/leaderboards')
 export class LeaderboardsControllerRPG {

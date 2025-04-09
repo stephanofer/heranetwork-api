@@ -4,6 +4,7 @@ import { LeaderboardsControllerSurvi21 } from '@/modules/leaderboards/controller
 import { LeaderboardsControllerRPG } from '@/modules/leaderboards/controller/leaderboards.rpg.controller';
 import { LeaderBoardsServiceRPG } from '@/modules/leaderboards/services/leaderboard.rpg.service';
 import { LeaderBoardsServiceSurvi21 } from '@/modules/leaderboards/services/leaderboard.survi21.service';
+import { PlayersRPGService } from '../players/services/players.rpg.service';
 
 @Module({
   controllers: [LeaderboardsControllerSurvi21, LeaderboardsControllerRPG],
@@ -11,6 +12,7 @@ import { LeaderBoardsServiceSurvi21 } from '@/modules/leaderboards/services/lead
     LeaderboardsService,
     LeaderBoardsServiceRPG,
     LeaderBoardsServiceSurvi21,
+    PlayersRPGService,
   ],
   exports: [
     LeaderboardsService,

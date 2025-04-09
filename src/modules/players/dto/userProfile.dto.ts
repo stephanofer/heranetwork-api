@@ -2,6 +2,8 @@ import { StatType } from '@/shared/interfaces/stats.interface';
 
 export interface UserProfile {
   uuid: string;
+  premiumId: string | null;
+  skinUUID: string | null;
   lastNickname: string;
   lastServer: string | null;
   lastSeen: Date;

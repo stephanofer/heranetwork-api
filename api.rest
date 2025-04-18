@@ -1,44 +1,5 @@
-### Get Example
-GET http://localhost:3000/player
-Accept: application/json
-
-### Get Example
-GET http://localhost:3000/player/72442e30864337d2a4f55b3c94a704a8
-Accept: application/json
-
-### Get Example
-GET http://localhost:3000/api/player/72442e30864337d2a4f55b3c94a704a8
-Accept: application/json
-
-
-### Get Example
+### Health for all ecosystem
 GET http://localhost:3000/api/health
-Accept: application/json
-
-
-
-### Get Example
-GET http://localhost:3000/api/v1/rpg/leaderboards/72442e30-8643-37d2-a4f5-5b3c94a704a8
-Accept: application/json
-
-
-### Get Example
-GET http://localhost:3000/api/v1/survi21/leaderboards/72442e30-8643-37d2-a4f5-5b3c94a704a8
-Accept: application/json
-
-
-### Get Example
-GET http://localhost:3000/api/v1/survi21/leaderboards/72442e30-8643-37d2-a4f5-5b3c94a704a8
-Accept: application/json
-
-
-
-### Get Example
-GET http://localhost:3000/api/v1/players/72442e30-8643-37d2-a4f5-5b3c94a704a8
-Accept: application/json
-
-### Get Example
-GET http://localhost:3000/api/v1/survi21/players/72442e30-8643-37d2-a4f5-5b3c94a704a8
 Accept: application/json
 
 ### Get Example
@@ -60,6 +21,5 @@ Accept: application/json
 ### Get Example
 GET http://localhost:3000/api/v1/rpg/players/75b9dbb7-4fe6-3597-bc5b-f20664e05428?type=kill
 Accept: application/json
-
 
 

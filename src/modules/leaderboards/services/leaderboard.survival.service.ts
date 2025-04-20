@@ -1,16 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { StatsType } from '@/shared/interfaces/stats-type.interface';
-import {
-  LeaderboardEntry,
-  RankingEntry,
-} from '@/modules/leaderboards/dto/leaderboard-entry.interface';
+import { PlayersService } from '@/modules/players/services/players.service';
+import { SurvivalPrismaService } from '@/databases/survival/surviva-prisma.service';
+import { LeaderboardEntry } from '@/modules/leaderboards/dto/leaderboard-entry.interface';
+import { LeaderboardOptions } from '@/modules/leaderboards/dto/leaderboard-options.interface';
+import { StatsTypeSurvival } from '@/shared/interfaces/stats-type.interface';
 import {
   InvalidLeaderboardTypeException,
   LeaderboardDataException,
 } from '@/modules/leaderboards/exceptions/leaderboard.exceptions';
-import { LeaderboardOptions } from '@/modules/leaderboards/dto/leaderboard-options.interface';
-import { RpgPrismaService } from '@/databases/rpg/rpg-prisma.service';
-import { PlayersService } from '@/modules/players/services/players.service';
+import { RankingEntry } from '@/modules/leaderboards/dto/leaderboard-entry.interface';
 import { Prisma } from '@global/client';
 import {
   PrismaClientKnownRequestError,
@@ -18,14 +16,14 @@ import {
 } from '@prisma/client/runtime/library';
 
 @Injectable()
-export class LeaderBoardsServiceRPG {
+export class LeaderBoardsServiceSurvival {
   constructor(
-    private prisma: RpgPrismaService,
+    private readonly prisma: SurvivalPrismaService,
     private readonly playersService: PlayersService,
   ) {}
 
   async getLeaderboardByType(
-    type: StatsType,
+    type: StatsTypeSurvival,
     options: LeaderboardOptions = { limit: 150, offset: 0 },
   ): Promise<LeaderboardEntry[]> {
     try {
@@ -51,7 +49,7 @@ export class LeaderBoardsServiceRPG {
   }
 
   async fetchLeaderboardByType(
-    type: StatsType,
+    type: StatsTypeSurvival,
     options: LeaderboardOptions,
   ): Promise<LeaderboardEntry[]> {
     const { limit = 150, offset = 0 } = options;
@@ -77,27 +75,23 @@ export class LeaderBoardsServiceRPG {
     };
 
     let entries: RankingEntry[] = [];
-
     switch (type) {
-      case StatsType.KILLS:
+      case StatsTypeSurvival.KILLS:
         entries = await this.prisma.rankingKill.findMany(baseQueryOptions);
         break;
-      case StatsType.DEATHS:
+      case StatsTypeSurvival.DEATHS:
         entries = await this.prisma.rankingDeath.findMany(baseQueryOptions);
         break;
-      case StatsType.KD:
+      case StatsTypeSurvival.KD:
         entries = await this.prisma.rankingKD.findMany(baseQueryOptions);
         break;
-      case StatsType.LEVEL:
-        entries = await this.prisma.rankingLevel.findMany(baseQueryOptions);
-        break;
-      case StatsType.MAX_STREAK:
+      case StatsTypeSurvival.MAX_STREAK:
         entries = await this.prisma.rankingMaxStreak.findMany(baseQueryOptions);
         break;
-      case StatsType.ELO:
+      case StatsTypeSurvival.ELO:
         entries = await this.prisma.rankingElo.findMany(baseQueryOptions);
         break;
-      case StatsType.KOTH:
+      case StatsTypeSurvival.KOTH:
         entries = await this.prisma.rankingKoth.findMany(baseQueryOptions);
         break;
       default:

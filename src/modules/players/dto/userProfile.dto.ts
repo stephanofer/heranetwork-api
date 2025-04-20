@@ -1,4 +1,4 @@
-import { StatType } from '@/shared/interfaces/stats.interface';
+import { StatsType } from '@/shared/interfaces/stats-type.interface';
 
 export interface UserProfile {
   uuid: string;
@@ -24,7 +24,7 @@ export interface UserAllDetails extends UserProfile {
 
 export interface UserCompleteData {
   stats: {
-    [key in StatType]: UserStats;
+    [key in StatsType]: UserStats;
   };
 }
 

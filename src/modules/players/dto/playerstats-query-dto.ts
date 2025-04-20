@@ -1,7 +1,7 @@
-import { StatType } from '@/shared/interfaces/stats.interface';
+import { StatsType } from '@/shared/interfaces/stats-type.interface';
 import { IsEnum } from 'class-validator';
 
 export class PlayerStatsQueryDTO {
-  @IsEnum(StatType)
-  type: StatType;
+  @IsEnum(StatsType)
+  type: StatsType;
 }

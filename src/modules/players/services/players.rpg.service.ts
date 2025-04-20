@@ -1,12 +1,7 @@
-import { RpgService } from '@/databases/rpgdb/rpgdb.service';
-import { formatUUID } from '@/shared/utils/uuid.util';
+import { RpgPrismaService } from '@/databases/rpg/rpg-prisma.service';
 import { Injectable } from '@nestjs/common';
-import {
-  UserProfile,
-  UserStats,
-  UserCompleteData,
-} from '../dto/userProfile.dto';
-import { StatType } from '@/shared/interfaces/stats.interface';
+import { UserStats, UserCompleteData } from '../dto/userProfile.dto';
+import { StatsType } from '@/shared/interfaces/stats-type.interface';
 import {
   InvalidStatTypeException,
   UserNotFoundException,
@@ -14,59 +9,14 @@ import {
 
 @Injectable()
 export class PlayersRPGService {
-  constructor(private prisma: RpgService) {}
-
-  async fetchAccountDetail(uuid: string): Promise<UserProfile> {
-    const formattedUUID = formatUUID(uuid);
-
-    const userProfile = await this.prisma.userProfile.findUnique({
-      where: {
-        uuid: formattedUUID,
-      },
-      select: {
-        uuid: true,
-        lastNickname: true,
-        lastServer: true,
-        lastSeen: true,
-        firstSeen: true,
-        premiumId: true,
-      },
-    });
-
-    const userRank = await this.prisma.playerRankNetwork.findUnique({
-      where: {
-        uuid,
-      },
-    });
-
-    const userSkin = await this.prisma.userSkinData.findUnique({
-      where: {
-        uuid,
-      },
-      select: {
-        skinIdentifier: true,
-      },
-    });
-
-    if (!userProfile || !userRank) {
-      throw new UserNotFoundException(uuid);
-    }
-
-    const formattedUser = {
-      ...userProfile,
-      primaryGroup: userRank.primaryGroup,
-      skinUUID: userSkin ? userSkin.skinIdentifier : null,
-    };
-
-    return formattedUser;
-  }
+  constructor(private prisma: RpgPrismaService) {}
 
   async fetchLeaderboardByType(
     uuid: string,
-    type: StatType,
+    type: StatsType,
   ): Promise<UserStats> {
     switch (type) {
-      case StatType.KILL:
+      case StatsType.KILLS:
         const kills = await this.prisma.rankingKill.findUnique({
           where: {
             uuid,
@@ -98,7 +48,7 @@ export class PlayersRPGService {
           dailyTimestamp: kills.dailyTimestamp.toNumber(),
         };
 
-      case StatType.DEATH:
+      case StatsType.DEATHS:
         const deaths = await this.prisma.rankingDeath.findUnique({
           where: {
             uuid,
@@ -130,7 +80,7 @@ export class PlayersRPGService {
           dailyTimestamp: deaths.dailyTimestamp.toNumber(),
         };
 
-      case StatType.KD:
+      case StatsType.KD:
         const kds = await this.prisma.rankingKD.findUnique({
           where: {
             uuid,
@@ -162,7 +112,7 @@ export class PlayersRPGService {
           dailyTimestamp: kds.dailyTimestamp.toNumber(),
         };
 
-      case StatType.LEVEL:
+      case StatsType.LEVEL:
         const levels = await this.prisma.rankingLevel.findUnique({
           where: {
             uuid,
@@ -194,7 +144,7 @@ export class PlayersRPGService {
           dailyTimestamp: levels.dailyTimestamp.toNumber(),
         };
 
-      case StatType.MAX_STREAK:
+      case StatsType.MAX_STREAK:
         const maxStreaks = await this.prisma.rankingMaxStreak.findUnique({
           where: {
             uuid,
@@ -226,7 +176,7 @@ export class PlayersRPGService {
           dailyTimestamp: maxStreaks.dailyTimestamp.toNumber(),
         };
 
-      case StatType.ELO:
+      case StatsType.ELO:
         const elos = await this.prisma.rankingElo.findUnique({
           where: {
             uuid,
@@ -258,7 +208,7 @@ export class PlayersRPGService {
           dailyTimestamp: elos.dailyTimestamp.toNumber(),
         };
 
-      case StatType.KOTH:
+      case StatsType.KOTH:
         const koths = await this.prisma.rankingKoth.findUnique({
           where: {
             uuid,
@@ -297,26 +247,26 @@ export class PlayersRPGService {
 
   async fetchCompleteUserData(uuid: string): Promise<UserCompleteData> {
     const statTypes = [
-      StatType.KILL,
-      StatType.DEATH,
-      StatType.KD,
-      StatType.LEVEL,
-      StatType.MAX_STREAK,
-      StatType.ELO,
-      StatType.KOTH,
+      StatsType.KILLS,
+      StatsType.DEATHS,
+      StatsType.KD,
+      StatsType.LEVEL,
+      StatsType.MAX_STREAK,
+      StatsType.ELO,
+      StatsType.KOTH,
     ];
 
     const statsPromises = statTypes.map((type) =>
       this.fetchLeaderboardByType(uuid, type),
     );
 
-    const [kill, death, kd, level, maxstreak, elo, koth] =
+    const [kills, deaths, kd, level, maxstreak, elo, koth] =
       await Promise.all(statsPromises);
 
     const stats: UserCompleteData = {
       stats: {
-        kill,
-        death,
+        kills,
+        deaths,
         kd,
         level,
         maxstreak,

@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { StatType } from '@/shared/interfaces/stats.interface';
+import { StatsType } from '@/shared/interfaces/stats-type.interface';
 
 export class InvalidStatTypeException extends HttpException {
-  constructor(type: StatType | string) {
+  constructor(type: StatsType | string) {
     super(`Invalid stat type: ${type}`, HttpStatus.BAD_REQUEST);
   }
 }

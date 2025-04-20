@@ -10,11 +10,13 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { EnvConfig } from '@/config/env.validation';
 import { Response } from 'express';
+import { PlayersService } from '../services/players.service';
 
 @Controller('rpg/players')
 export class PlayersRPGController {
   constructor(
     private readonly playersService: PlayersRPGService,
+    private readonly playersServices: PlayersService,
     private readonly responseService: ResponseService,
     private readonly configService: ConfigService<EnvConfig, true>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
@@ -41,7 +43,7 @@ export class PlayersRPGController {
         );
       }
 
-      const accountDetail = await this.playersService.fetchAccountDetail(uuid);
+      const accountDetail = await this.playersServices.fetchAccountDetail(uuid);
       const accountStats = await this.playersService.fetchLeaderboardByType(
         uuid,
         type,
@@ -70,7 +72,7 @@ export class PlayersRPGController {
         );
       }
 
-      const accountDetail = await this.playersService.fetchAccountDetail(uuid);
+      const accountDetail = await this.playersServices.fetchAccountDetail(uuid);
       const completeUserData =
         await this.playersService.fetchCompleteUserData(uuid);
 

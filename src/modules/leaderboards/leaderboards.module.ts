@@ -1,23 +1,14 @@
 import { Module } from '@nestjs/common';
-import { LeaderboardsService } from '@/modules/leaderboards/services/leaderboards.service';
-import { LeaderboardsControllerSurvi21 } from '@/modules/leaderboards/controller/leaderboards.survi21.controller';
-import { LeaderboardsControllerRPG } from '@/modules/leaderboards/controller/leaderboards.rpg.controller';
+import { LeaderboardsControllerSurvival } from '@/modules/leaderboards/controllers/leaderboards.survival.controller';
+import { LeaderboardsControllerRPG } from '@/modules/leaderboards/controllers/leaderboards.rpg.controller';
 import { LeaderBoardsServiceRPG } from '@/modules/leaderboards/services/leaderboard.rpg.service';
-import { LeaderBoardsServiceSurvi21 } from '@/modules/leaderboards/services/leaderboard.survi21.service';
-import { PlayersRPGService } from '../players/services/players.rpg.service';
+import { PlayersModule } from '@/modules/players/players.module';
+import { LeaderBoardsServiceSurvival } from '@/modules/leaderboards/services/leaderboard.survival.service';
 
 @Module({
-  controllers: [LeaderboardsControllerSurvi21, LeaderboardsControllerRPG],
-  providers: [
-    LeaderboardsService,
-    LeaderBoardsServiceRPG,
-    LeaderBoardsServiceSurvi21,
-    PlayersRPGService,
-  ],
-  exports: [
-    LeaderboardsService,
-    LeaderBoardsServiceRPG,
-    LeaderBoardsServiceSurvi21,
-  ],
+  controllers: [LeaderboardsControllerSurvival, LeaderboardsControllerRPG],
+  providers: [LeaderBoardsServiceRPG, LeaderBoardsServiceSurvival],
+  exports: [LeaderBoardsServiceRPG, LeaderBoardsServiceSurvival],
+  imports: [PlayersModule],
 })
 export class LeaderboardsModule {}

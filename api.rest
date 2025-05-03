@@ -3,11 +3,16 @@ GET http://localhost:3000/api/health
 Accept: application/json
 
 ### Leaderboards RPG
-GET http://localhost:3000/api/v1/rpg/leaderboards?type=kills
+GET http://localhost:3000/api/v1/rpg/leaderboards?type=killsd
 Accept: application/json
 
 ### Leaderboards Survival
 GET http://localhost:3000/api/v1/survival/leaderboards?type=kills
+Accept: application/json
+
+
+### Leaderboards Survival
+GET http://localhost:3000/api/v1/debug-sentry
 Accept: application/json
 
 

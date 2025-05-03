@@ -9,4 +9,12 @@ export class AppConfigService {
   get cacheTTL(): number {
     return this.configService.get('CACHE_TTL', { infer: true });
   }
+
+  get getEnvironment(): string {
+    return this.configService.get('ENVIRONMENT', { infer: true });
+  }
+
+  get getSentryDSN(): string {
+    return this.configService.get('SENTRY_DSN', { infer: true });
+  }
 }

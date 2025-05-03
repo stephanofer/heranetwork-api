@@ -10,9 +10,11 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule } from '@nestjs/config';
 import { validate } from '@/config/config.validation';
 import { PrismaModule } from './databases/prisma.module';
+import { SentryModule } from '@sentry/nestjs/setup';
 
 @Module({
   imports: [
+    SentryModule.forRoot(),
     PrismaModule,
     LeaderboardsModule,
     PlayersModule,

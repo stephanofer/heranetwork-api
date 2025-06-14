@@ -1,9 +1,8 @@
+import '@/instrument';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '@/app.module';
 import { ValidationPipe } from '@nestjs/common';
-import * as Sentry from '@sentry/nestjs';
-import { ConfigService } from '@nestjs/config';
-import { EnvConfig } from './config/env.validation';
+import * as compression from 'compression';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,14 +15,13 @@ async function bootstrap() {
       },
     }),
   );
-  const configService = app.get(ConfigService<EnvConfig, true>);
 
-  Sentry.init({
-    dsn: configService.get('SENTRY_DSN'),
-    sendDefaultPii: true,
-    includeLocalVariables: true,
-    tracesSampleRate: 0.5,
-  });
+  app.use(compression());
+  // app.enableCors({
+  //   origin: ['https://heramc.net'],
+  //   methods: ['GET', 'POST'],
+  //   credentials: true,
+  // });
 
   await app.listen(process.env.PORT ?? 3000);
 }

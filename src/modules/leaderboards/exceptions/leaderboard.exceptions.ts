@@ -2,7 +2,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { StatsType } from '@/shared/interfaces/stats-type.interface';
 
 export class InvalidLeaderboardTypeException extends HttpException {
-  constructor(type: StatsType | string) {
+  constructor(type: string) {
     super(`Invalid leaderboard stat type: ${type}`, HttpStatus.BAD_REQUEST);
   }
 }

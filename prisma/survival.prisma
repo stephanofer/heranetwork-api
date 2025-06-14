@@ -1,12 +1,229 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../../node_modules/@survival/client"
+  output   = "../node_modules/@survival/client"
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL_SURVIVAL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL_SURVIVAL")
   relationMode = "prisma"
+}
+
+model PlayerKoth {
+  uuid      String           @id @db.VarChar(36)
+  name      String           @db.VarChar(16)
+  last_seen DateTime?        @default(now()) @db.Timestamp(0)
+  kothStats PlayerKothStat[]
+  kothWins  PlayerKothWin[]
+
+  @@map("koth_players")
+}
+
+model PlayerKothStat {
+  uuid       String     @map("player_uuid") @db.VarChar(36)
+  kothName   String     @map("koth_name") @db.VarChar(64)
+  wins       Int?       @default(0)
+  kothPlayer PlayerKoth @relation(fields: [uuid], references: [uuid], onDelete: Cascade, onUpdate: NoAction, map: "koth_stats_ibfk_1")
+
+  @@id([uuid, kothName])
+  @@map("koth_stats")
+}
+
+model PlayerKothWin {
+  id         Int        @id @default(autoincrement())
+  uuid       String     @map("player_uuid") @db.VarChar(36)
+  kothName   String     @map("koth_name") @db.VarChar(64)
+  winTime    DateTime?  @default(now()) @map("win_time") @db.Timestamp(0)
+  kothPlayer PlayerKoth @relation(fields: [uuid], references: [uuid], onDelete: Cascade, onUpdate: NoAction, map: "koth_wins_ibfk_1")
+
+  @@index([uuid], map: "player_uuid")
+  @@map("koth_wins")
+}
+
+model RankingDeath {
+  uuid             String   @id @map("id") @db.VarChar(36)
+  value            Decimal? @db.Decimal(65, 2)
+  hourlyDelta      Decimal? @map("hourly_delta") @db.Decimal(65, 2)
+  hourlyLastTotal  Decimal? @map("hourly_lasttotal") @db.Decimal(65, 2)
+  hourlyTimestamp  Decimal? @map("hourly_timestamp") @db.Decimal(65, 2)
+  dailyDelta       Decimal? @map("daily_delta") @db.Decimal(65, 2)
+  dailyLastTotal   Decimal? @map("daily_lasttotal") @db.Decimal(65, 2)
+  dailyTimestamp   Decimal? @map("daily_timestamp") @db.Decimal(65, 2)
+  weeklyDelta      Decimal? @map("weekly_delta") @db.Decimal(65, 2)
+  weeklyLastTotal  Decimal? @map("weekly_lasttotal") @db.Decimal(65, 2)
+  weeklyTimestamp  Decimal? @map("weekly_timestamp") @db.Decimal(65, 2)
+  monthlyDelta     Decimal? @map("monthly_delta") @db.Decimal(65, 2)
+  monthlyLastTotal Decimal? @map("monthly_lasttotal") @db.Decimal(65, 2)
+  monthlyTimestamp Decimal? @map("monthly_timestamp") @db.Decimal(65, 2)
+  yearlyDelta      Decimal? @map("yearly_delta") @db.Decimal(65, 2)
+  yearlyLastTotal  Decimal? @map("yearly_lasttotal") @db.Decimal(65, 2)
+  yearlyTimestamp  Decimal? @map("yearly_timestamp") @db.Decimal(65, 2)
+  nameCache        String?  @map("namecache") @db.VarChar(16)
+  prefixcache      String?  @db.VarChar(1024)
+  suffixcache      String?  @db.VarChar(1024)
+  displayNameCache String?  @map("displaynamecache") @db.VarChar(2048)
+
+  @@index([dailyTimestamp], map: "daily_timestamp")
+  @@index([hourlyTimestamp], map: "hourly_timestamp")
+  @@index([monthlyTimestamp], map: "monthly_timestamp")
+  @@index([weeklyTimestamp], map: "weekly_timestamp")
+  @@index([yearlyTimestamp], map: "yearly_timestamp")
+  @@map("ajlb_deluxecombat_ranking_deaths")
+}
+
+model RankingKD {
+  uuid             String   @id @map("id") @db.VarChar(36)
+  value            Decimal? @db.Decimal(65, 2)
+  hourlyDelta      Decimal? @map("hourly_delta") @db.Decimal(65, 2)
+  hourlyLastTotal  Decimal? @map("hourly_lasttotal") @db.Decimal(65, 2)
+  hourlyTimestamp  Decimal? @map("hourly_timestamp") @db.Decimal(65, 2)
+  dailyDelta       Decimal? @map("daily_delta") @db.Decimal(65, 2)
+  dailyLastTotal   Decimal? @map("daily_lasttotal") @db.Decimal(65, 2)
+  dailyTimestamp   Decimal? @map("daily_timestamp") @db.Decimal(65, 2)
+  weeklyDelta      Decimal? @map("weekly_delta") @db.Decimal(65, 2)
+  weeklyLastTotal  Decimal? @map("weekly_lasttotal") @db.Decimal(65, 2)
+  weeklyTimestamp  Decimal? @map("weekly_timestamp") @db.Decimal(65, 2)
+  monthlyDelta     Decimal? @map("monthly_delta") @db.Decimal(65, 2)
+  monthlyLastTotal Decimal? @map("monthly_lasttotal") @db.Decimal(65, 2)
+  monthlyTimestamp Decimal? @map("monthly_timestamp") @db.Decimal(65, 2)
+  yearlyDelta      Decimal? @map("yearly_delta") @db.Decimal(65, 2)
+  yearlyLastTotal  Decimal? @map("yearly_lasttotal") @db.Decimal(65, 2)
+  yearlyTimestamp  Decimal? @map("yearly_timestamp") @db.Decimal(65, 2)
+  nameCache        String?  @map("namecache") @db.VarChar(16)
+  prefixcache      String?  @db.VarChar(1024)
+  suffixcache      String?  @db.VarChar(1024)
+  displayNameCache String?  @map("displaynamecache") @db.VarChar(2048)
+
+  @@index([dailyTimestamp], map: "daily_timestamp")
+  @@index([hourlyTimestamp], map: "hourly_timestamp")
+  @@index([monthlyTimestamp], map: "monthly_timestamp")
+  @@index([weeklyTimestamp], map: "weekly_timestamp")
+  @@index([yearlyTimestamp], map: "yearly_timestamp")
+  @@map("ajlb_deluxecombat_ranking_kd")
+}
+
+model RankingKill {
+  uuid             String   @id @map("id") @db.VarChar(36)
+  value            Decimal? @db.Decimal(65, 2)
+  hourlyDelta      Decimal? @map("hourly_delta") @db.Decimal(65, 2)
+  hourlyLastTotal  Decimal? @map("hourly_lasttotal") @db.Decimal(65, 2)
+  hourlyTimestamp  Decimal? @map("hourly_timestamp") @db.Decimal(65, 2)
+  dailyDelta       Decimal? @map("daily_delta") @db.Decimal(65, 2)
+  dailyLastTotal   Decimal? @map("daily_lasttotal") @db.Decimal(65, 2)
+  dailyTimestamp   Decimal? @map("daily_timestamp") @db.Decimal(65, 2)
+  weeklyDelta      Decimal? @map("weekly_delta") @db.Decimal(65, 2)
+  weeklyLastTotal  Decimal? @map("weekly_lasttotal") @db.Decimal(65, 2)
+  weeklyTimestamp  Decimal? @map("weekly_timestamp") @db.Decimal(65, 2)
+  monthlyDelta     Decimal? @map("monthly_delta") @db.Decimal(65, 2)
+  monthlyLastTotal Decimal? @map("monthly_lasttotal") @db.Decimal(65, 2)
+  monthlyTimestamp Decimal? @map("monthly_timestamp") @db.Decimal(65, 2)
+  yearlyDelta      Decimal? @map("yearly_delta") @db.Decimal(65, 2)
+  yearlyLastTotal  Decimal? @map("yearly_lasttotal") @db.Decimal(65, 2)
+  yearlyTimestamp  Decimal? @map("yearly_timestamp") @db.Decimal(65, 2)
+  nameCache        String?  @map("namecache") @db.VarChar(16)
+  prefixcache      String?  @db.VarChar(1024)
+  suffixcache      String?  @db.VarChar(1024)
+  displayNameCache String?  @map("displaynamecache") @db.VarChar(2048)
+
+  @@index([dailyTimestamp], map: "daily_timestamp")
+  @@index([hourlyTimestamp], map: "hourly_timestamp")
+  @@index([monthlyTimestamp], map: "monthly_timestamp")
+  @@index([weeklyTimestamp], map: "weekly_timestamp")
+  @@index([yearlyTimestamp], map: "yearly_timestamp")
+  @@map("ajlb_deluxecombat_ranking_kills")
+}
+
+model RankingMaxStreak {
+  uuid             String   @id @map("id") @db.VarChar(36)
+  value            Decimal? @db.Decimal(65, 2)
+  hourlyDelta      Decimal? @map("hourly_delta") @db.Decimal(65, 2)
+  hourlyLastTotal  Decimal? @map("hourly_lasttotal") @db.Decimal(65, 2)
+  hourlyTimestamp  Decimal? @map("hourly_timestamp") @db.Decimal(65, 2)
+  dailyDelta       Decimal? @map("daily_delta") @db.Decimal(65, 2)
+  dailyLastTotal   Decimal? @map("daily_lasttotal") @db.Decimal(65, 2)
+  dailyTimestamp   Decimal? @map("daily_timestamp") @db.Decimal(65, 2)
+  weeklyDelta      Decimal? @map("weekly_delta") @db.Decimal(65, 2)
+  weeklyLastTotal  Decimal? @map("weekly_lasttotal") @db.Decimal(65, 2)
+  weeklyTimestamp  Decimal? @map("weekly_timestamp") @db.Decimal(65, 2)
+  monthlyDelta     Decimal? @map("monthly_delta") @db.Decimal(65, 2)
+  monthlyLastTotal Decimal? @map("monthly_lasttotal") @db.Decimal(65, 2)
+  monthlyTimestamp Decimal? @map("monthly_timestamp") @db.Decimal(65, 2)
+  yearlyDelta      Decimal? @map("yearly_delta") @db.Decimal(65, 2)
+  yearlyLastTotal  Decimal? @map("yearly_lasttotal") @db.Decimal(65, 2)
+  yearlyTimestamp  Decimal? @map("yearly_timestamp") @db.Decimal(65, 2)
+  nameCache        String?  @map("namecache") @db.VarChar(16)
+  prefixcache      String?  @db.VarChar(1024)
+  suffixcache      String?  @db.VarChar(1024)
+  displayNameCache String?  @map("displaynamecache") @db.VarChar(2048)
+
+  @@index([dailyTimestamp], map: "daily_timestamp")
+  @@index([hourlyTimestamp], map: "hourly_timestamp")
+  @@index([monthlyTimestamp], map: "monthly_timestamp")
+  @@index([weeklyTimestamp], map: "weekly_timestamp")
+  @@index([yearlyTimestamp], map: "yearly_timestamp")
+  @@map("ajlb_deluxecombat_ranking_maxstreak")
+}
+
+model RankingElo {
+  uuid             String   @id @map("id") @db.VarChar(36)
+  value            Decimal? @db.Decimal(65, 2)
+  hourlyDelta      Decimal? @map("hourly_delta") @db.Decimal(65, 2)
+  hourlyLastTotal  Decimal? @map("hourly_lasttotal") @db.Decimal(65, 2)
+  hourlyTimestamp  Decimal? @map("hourly_timestamp") @db.Decimal(65, 2)
+  dailyDelta       Decimal? @map("daily_delta") @db.Decimal(65, 2)
+  dailyLastTotal   Decimal? @map("daily_lasttotal") @db.Decimal(65, 2)
+  dailyTimestamp   Decimal? @map("daily_timestamp") @db.Decimal(65, 2)
+  weeklyDelta      Decimal? @map("weekly_delta") @db.Decimal(65, 2)
+  weeklyLastTotal  Decimal? @map("weekly_lasttotal") @db.Decimal(65, 2)
+  weeklyTimestamp  Decimal? @map("weekly_timestamp") @db.Decimal(65, 2)
+  monthlyDelta     Decimal? @map("monthly_delta") @db.Decimal(65, 2)
+  monthlyLastTotal Decimal? @map("monthly_lasttotal") @db.Decimal(65, 2)
+  monthlyTimestamp Decimal? @map("monthly_timestamp") @db.Decimal(65, 2)
+  yearlyDelta      Decimal? @map("yearly_delta") @db.Decimal(65, 2)
+  yearlyLastTotal  Decimal? @map("yearly_lasttotal") @db.Decimal(65, 2)
+  yearlyTimestamp  Decimal? @map("yearly_timestamp") @db.Decimal(65, 2)
+  nameCache        String?  @map("namecache") @db.VarChar(16)
+  prefixcache      String?  @db.VarChar(1024)
+  suffixcache      String?  @db.VarChar(1024)
+  displayNameCache String?  @map("displaynamecache") @db.VarChar(2048)
+
+  @@index([dailyTimestamp], map: "daily_timestamp")
+  @@index([hourlyTimestamp], map: "hourly_timestamp")
+  @@index([monthlyTimestamp], map: "monthly_timestamp")
+  @@index([weeklyTimestamp], map: "weekly_timestamp")
+  @@index([yearlyTimestamp], map: "yearly_timestamp")
+  @@map("ajlb_deluxecombat_ranking_points")
+}
+
+model RankingKoth {
+  uuid             String   @id @map("id") @db.VarChar(36)
+  value            Decimal? @db.Decimal(65, 2)
+  hourlyDelta      Decimal? @map("hourly_delta") @db.Decimal(65, 2)
+  hourlyLastTotal  Decimal? @map("hourly_lasttotal") @db.Decimal(65, 2)
+  hourlyTimestamp  Decimal? @map("hourly_timestamp") @db.Decimal(65, 2)
+  dailyDelta       Decimal? @map("daily_delta") @db.Decimal(65, 2)
+  dailyLastTotal   Decimal? @map("daily_lasttotal") @db.Decimal(65, 2)
+  dailyTimestamp   Decimal? @map("daily_timestamp") @db.Decimal(65, 2)
+  weeklyDelta      Decimal? @map("weekly_delta") @db.Decimal(65, 2)
+  weeklyLastTotal  Decimal? @map("weekly_lasttotal") @db.Decimal(65, 2)
+  weeklyTimestamp  Decimal? @map("weekly_timestamp") @db.Decimal(65, 2)
+  monthlyDelta     Decimal? @map("monthly_delta") @db.Decimal(65, 2)
+  monthlyLastTotal Decimal? @map("monthly_lasttotal") @db.Decimal(65, 2)
+  monthlyTimestamp Decimal? @map("monthly_timestamp") @db.Decimal(65, 2)
+  yearlyDelta      Decimal? @map("yearly_delta") @db.Decimal(65, 2)
+  yearlyLastTotal  Decimal? @map("yearly_lasttotal") @db.Decimal(65, 2)
+  yearlyTimestamp  Decimal? @map("yearly_timestamp") @db.Decimal(65, 2)
+  nameCache        String?  @map("namecache") @db.VarChar(16)
+  prefixcache      String?  @db.VarChar(1024)
+  suffixcache      String?  @db.VarChar(1024)
+  displayNameCache String?  @map("displaynamecache") @db.VarChar(2048)
+
+  @@index([dailyTimestamp], map: "daily_timestamp")
+  @@index([hourlyTimestamp], map: "hourly_timestamp")
+  @@index([monthlyTimestamp], map: "monthly_timestamp")
+  @@index([weeklyTimestamp], map: "weekly_timestamp")
+  @@index([yearlyTimestamp], map: "yearly_timestamp")
+  @@map("ajlb_zkothdata_total_wins")
 }
 
 model DELUXECOMBAT_PLAYERLIST {
@@ -57,198 +274,6 @@ model DELUXECOMBAT_STATS {
   @@ignore
 }
 
-model RankingDeath {
-  uuid                String   @id @db.VarChar(36) @map("id")
-  value             Decimal? @db.Decimal(65, 2)
-  hourlyDelta      Decimal? @db.Decimal(65, 2) @map("hourly_delta")
-  hourlyLastTotal  Decimal? @db.Decimal(65, 2) @map("hourly_lasttotal")
-  hourlyTimestamp  Decimal? @db.Decimal(65, 2) @map("hourly_timestamp")
-  dailyDelta       Decimal? @db.Decimal(65, 2) @map("daily_delta")
-  dailyLastTotal   Decimal? @db.Decimal(65, 2) @map("daily_lasttotal")
-  dailyTimestamp   Decimal? @db.Decimal(65, 2) @map("daily_timestamp")
-  weeklyDelta      Decimal? @db.Decimal(65, 2) @map("weekly_delta")
-  weeklyLastTotal  Decimal? @db.Decimal(65, 2) @map("weekly_lasttotal")
-  weeklyTimestamp  Decimal? @db.Decimal(65, 2) @map("weekly_timestamp")
-  monthlyDelta     Decimal? @db.Decimal(65, 2) @map("monthly_delta")
-  monthlyLastTotal Decimal? @db.Decimal(65, 2) @map("monthly_lasttotal")
-  monthlyTimestamp Decimal? @db.Decimal(65, 2) @map("monthly_timestamp")
-  yearlyDelta      Decimal? @db.Decimal(65, 2) @map("yearly_delta")
-  yearlyLastTotal  Decimal? @db.Decimal(65, 2) @map("yearly_lasttotal")
-  yearlyTimestamp  Decimal? @db.Decimal(65, 2) @map("yearly_timestamp")
-  nameCache         String?  @db.VarChar(16) @map("namecache")
-  prefixcache       String?  @db.VarChar(1024)
-  suffixcache       String?  @db.VarChar(1024)
-  displayNameCache  String?  @db.VarChar(2048) @map("displaynamecache")
-
-  @@index([dailyTimestamp], map: "daily_timestamp")
-  @@index([hourlyTimestamp], map: "hourly_timestamp")
-  @@index([monthlyTimestamp], map: "monthly_timestamp")
-  @@index([weeklyTimestamp], map: "weekly_timestamp")
-  @@index([yearlyTimestamp], map: "yearly_timestamp")
-
-  @@map("ajlb_deluxecombat_ranking_deaths")
-}
-
-model RankingKD {
-  uuid                String   @id @db.VarChar(36) @map("id")
-  value             Decimal? @db.Decimal(65, 2)
-  hourlyDelta      Decimal? @db.Decimal(65, 2) @map("hourly_delta")
-  hourlyLastTotal  Decimal? @db.Decimal(65, 2) @map("hourly_lasttotal")
-  hourlyTimestamp  Decimal? @db.Decimal(65, 2) @map("hourly_timestamp")
-  dailyDelta       Decimal? @db.Decimal(65, 2) @map("daily_delta")
-  dailyLastTotal   Decimal? @db.Decimal(65, 2) @map("daily_lasttotal")
-  dailyTimestamp   Decimal? @db.Decimal(65, 2) @map("daily_timestamp")
-  weeklyDelta      Decimal? @db.Decimal(65, 2) @map("weekly_delta")
-  weeklyLastTotal  Decimal? @db.Decimal(65, 2) @map("weekly_lasttotal")
-  weeklyTimestamp  Decimal? @db.Decimal(65, 2) @map("weekly_timestamp")
-  monthlyDelta     Decimal? @db.Decimal(65, 2) @map("monthly_delta")
-  monthlyLastTotal Decimal? @db.Decimal(65, 2) @map("monthly_lasttotal")
-  monthlyTimestamp Decimal? @db.Decimal(65, 2) @map("monthly_timestamp")
-  yearlyDelta      Decimal? @db.Decimal(65, 2) @map("yearly_delta")
-  yearlyLastTotal  Decimal? @db.Decimal(65, 2) @map("yearly_lasttotal")
-  yearlyTimestamp  Decimal? @db.Decimal(65, 2) @map("yearly_timestamp")
-  nameCache         String?  @db.VarChar(16) @map("namecache")
-  prefixcache       String?  @db.VarChar(1024)
-  suffixcache       String?  @db.VarChar(1024)
-  displayNameCache  String?  @db.VarChar(2048) @map("displaynamecache")
-
-  @@index([dailyTimestamp], map: "daily_timestamp")
-  @@index([hourlyTimestamp], map: "hourly_timestamp")
-  @@index([monthlyTimestamp], map: "monthly_timestamp")
-  @@index([weeklyTimestamp], map: "weekly_timestamp")
-  @@index([yearlyTimestamp], map: "yearly_timestamp")
-
-  @@map("ajlb_deluxecombat_ranking_kd")
-}
-
-model RankingKill {
-  uuid                String   @id @db.VarChar(36) @map("id")
-  value             Decimal? @db.Decimal(65, 2)
-  hourlyDelta      Decimal? @db.Decimal(65, 2) @map("hourly_delta")
-  hourlyLastTotal  Decimal? @db.Decimal(65, 2) @map("hourly_lasttotal")
-  hourlyTimestamp  Decimal? @db.Decimal(65, 2) @map("hourly_timestamp")
-  dailyDelta       Decimal? @db.Decimal(65, 2) @map("daily_delta")
-  dailyLastTotal   Decimal? @db.Decimal(65, 2) @map("daily_lasttotal")
-  dailyTimestamp   Decimal? @db.Decimal(65, 2) @map("daily_timestamp")
-  weeklyDelta      Decimal? @db.Decimal(65, 2) @map("weekly_delta")
-  weeklyLastTotal  Decimal? @db.Decimal(65, 2) @map("weekly_lasttotal")
-  weeklyTimestamp  Decimal? @db.Decimal(65, 2) @map("weekly_timestamp")
-  monthlyDelta     Decimal? @db.Decimal(65, 2) @map("monthly_delta")
-  monthlyLastTotal Decimal? @db.Decimal(65, 2) @map("monthly_lasttotal")
-  monthlyTimestamp Decimal? @db.Decimal(65, 2) @map("monthly_timestamp")
-  yearlyDelta      Decimal? @db.Decimal(65, 2) @map("yearly_delta")
-  yearlyLastTotal  Decimal? @db.Decimal(65, 2) @map("yearly_lasttotal")
-  yearlyTimestamp  Decimal? @db.Decimal(65, 2) @map("yearly_timestamp")
-  nameCache         String?  @db.VarChar(16) @map("namecache")
-  prefixcache       String?  @db.VarChar(1024)
-  suffixcache       String?  @db.VarChar(1024)
-  displayNameCache  String?  @db.VarChar(2048) @map("displaynamecache")
-
-  @@index([dailyTimestamp], map: "daily_timestamp")
-  @@index([hourlyTimestamp], map: "hourly_timestamp")
-  @@index([monthlyTimestamp], map: "monthly_timestamp")
-  @@index([weeklyTimestamp], map: "weekly_timestamp")
-  @@index([yearlyTimestamp], map: "yearly_timestamp")
-
-  @@map("ajlb_deluxecombat_ranking_kills")
-}
-
-model RankingMaxStreak {
-  uuid                String   @id @db.VarChar(36) @map("id")
-  value             Decimal? @db.Decimal(65, 2)
-  hourlyDelta      Decimal? @db.Decimal(65, 2) @map("hourly_delta")
-  hourlyLastTotal  Decimal? @db.Decimal(65, 2) @map("hourly_lasttotal")
-  hourlyTimestamp  Decimal? @db.Decimal(65, 2) @map("hourly_timestamp")
-  dailyDelta       Decimal? @db.Decimal(65, 2) @map("daily_delta")
-  dailyLastTotal   Decimal? @db.Decimal(65, 2) @map("daily_lasttotal")
-  dailyTimestamp   Decimal? @db.Decimal(65, 2) @map("daily_timestamp")
-  weeklyDelta      Decimal? @db.Decimal(65, 2) @map("weekly_delta")
-  weeklyLastTotal  Decimal? @db.Decimal(65, 2) @map("weekly_lasttotal")
-  weeklyTimestamp  Decimal? @db.Decimal(65, 2) @map("weekly_timestamp")
-  monthlyDelta     Decimal? @db.Decimal(65, 2) @map("monthly_delta")
-  monthlyLastTotal Decimal? @db.Decimal(65, 2) @map("monthly_lasttotal")
-  monthlyTimestamp Decimal? @db.Decimal(65, 2) @map("monthly_timestamp")
-  yearlyDelta      Decimal? @db.Decimal(65, 2) @map("yearly_delta")
-  yearlyLastTotal  Decimal? @db.Decimal(65, 2) @map("yearly_lasttotal")
-  yearlyTimestamp  Decimal? @db.Decimal(65, 2) @map("yearly_timestamp")
-  nameCache         String?  @db.VarChar(16) @map("namecache")
-  prefixcache       String?  @db.VarChar(1024)
-  suffixcache       String?  @db.VarChar(1024)
-  displayNameCache  String?  @db.VarChar(2048) @map("displaynamecache")
-
-  @@index([dailyTimestamp], map: "daily_timestamp")
-  @@index([hourlyTimestamp], map: "hourly_timestamp")
-  @@index([monthlyTimestamp], map: "monthly_timestamp")
-  @@index([weeklyTimestamp], map: "weekly_timestamp")
-  @@index([yearlyTimestamp], map: "yearly_timestamp")
-
-  @@map("ajlb_deluxecombat_ranking_maxstreak")
-}
-
-model RankingElo {
-  uuid                String   @id @db.VarChar(36) @map("id")
-  value             Decimal? @db.Decimal(65, 2)
-  hourlyDelta      Decimal? @db.Decimal(65, 2) @map("hourly_delta")
-  hourlyLastTotal  Decimal? @db.Decimal(65, 2) @map("hourly_lasttotal")
-  hourlyTimestamp  Decimal? @db.Decimal(65, 2) @map("hourly_timestamp")
-  dailyDelta       Decimal? @db.Decimal(65, 2) @map("daily_delta")
-  dailyLastTotal   Decimal? @db.Decimal(65, 2) @map("daily_lasttotal")
-  dailyTimestamp   Decimal? @db.Decimal(65, 2) @map("daily_timestamp")
-  weeklyDelta      Decimal? @db.Decimal(65, 2) @map("weekly_delta")
-  weeklyLastTotal  Decimal? @db.Decimal(65, 2) @map("weekly_lasttotal")
-  weeklyTimestamp  Decimal? @db.Decimal(65, 2) @map("weekly_timestamp")
-  monthlyDelta     Decimal? @db.Decimal(65, 2) @map("monthly_delta")
-  monthlyLastTotal Decimal? @db.Decimal(65, 2) @map("monthly_lasttotal")
-  monthlyTimestamp Decimal? @db.Decimal(65, 2) @map("monthly_timestamp")
-  yearlyDelta      Decimal? @db.Decimal(65, 2) @map("yearly_delta")
-  yearlyLastTotal  Decimal? @db.Decimal(65, 2) @map("yearly_lasttotal")
-  yearlyTimestamp  Decimal? @db.Decimal(65, 2) @map("yearly_timestamp")
-  nameCache         String?  @db.VarChar(16) @map("namecache")
-  prefixcache       String?  @db.VarChar(1024)
-  suffixcache       String?  @db.VarChar(1024)
-  displayNameCache  String?  @db.VarChar(2048) @map("displaynamecache")
-
-  @@index([dailyTimestamp], map: "daily_timestamp")
-  @@index([hourlyTimestamp], map: "hourly_timestamp")
-  @@index([monthlyTimestamp], map: "monthly_timestamp")
-  @@index([weeklyTimestamp], map: "weekly_timestamp")
-  @@index([yearlyTimestamp], map: "yearly_timestamp")
-
-  @@map("ajlb_deluxecombat_ranking_points")
-}
-
-model RankingKoth {
-  uuid                String   @id @db.VarChar(36) @map("id")
-  value             Decimal? @db.Decimal(65, 2)
-  hourlyDelta      Decimal? @db.Decimal(65, 2) @map("hourly_delta")
-  hourlyLastTotal  Decimal? @db.Decimal(65, 2) @map("hourly_lasttotal")
-  hourlyTimestamp  Decimal? @db.Decimal(65, 2) @map("hourly_timestamp")
-  dailyDelta       Decimal? @db.Decimal(65, 2) @map("daily_delta")
-  dailyLastTotal   Decimal? @db.Decimal(65, 2) @map("daily_lasttotal")
-  dailyTimestamp   Decimal? @db.Decimal(65, 2) @map("daily_timestamp")
-  weeklyDelta      Decimal? @db.Decimal(65, 2) @map("weekly_delta")
-  weeklyLastTotal  Decimal? @db.Decimal(65, 2) @map("weekly_lasttotal")
-  weeklyTimestamp  Decimal? @db.Decimal(65, 2) @map("weekly_timestamp")
-  monthlyDelta     Decimal? @db.Decimal(65, 2) @map("monthly_delta")
-  monthlyLastTotal Decimal? @db.Decimal(65, 2) @map("monthly_lasttotal")
-  monthlyTimestamp Decimal? @db.Decimal(65, 2) @map("monthly_timestamp")
-  yearlyDelta      Decimal? @db.Decimal(65, 2) @map("yearly_delta")
-  yearlyLastTotal  Decimal? @db.Decimal(65, 2) @map("yearly_lasttotal")
-  yearlyTimestamp  Decimal? @db.Decimal(65, 2) @map("yearly_timestamp")
-  nameCache         String?  @db.VarChar(16) @map("namecache")
-  prefixcache       String?  @db.VarChar(1024)
-  suffixcache       String?  @db.VarChar(1024)
-  displayNameCache  String?  @db.VarChar(2048) @map("displaynamecache") 
-
-  @@index([dailyTimestamp], map: "daily_timestamp")
-  @@index([hourlyTimestamp], map: "hourly_timestamp")
-  @@index([monthlyTimestamp], map: "monthly_timestamp")
-  @@index([weeklyTimestamp], map: "weekly_timestamp")
-  @@index([yearlyTimestamp], map: "yearly_timestamp")
-
-  @@map("ajlb_zkothdata_total_wins")
-}
-
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model ajlb_extras {
   id          String? @db.VarChar(36)
@@ -256,35 +281,4 @@ model ajlb_extras {
   value       String? @db.VarChar(2048)
 
   @@ignore
-}
-
-model PlayerKoth {
-  uuid       String       @id @db.VarChar(36)
-  name       String       @db.VarChar(16)
-  last_seen  DateTime?    @default(now()) @db.Timestamp(0)
-  kothStats  PlayerKothStat[]
-  kothWins   PlayerKothWin[]
-
-  @@map("koth_players")
-}
-
-model PlayerKothStat {
-  uuid       String     @db.VarChar(36) @map("player_uuid")
-  kothName   String     @db.VarChar(64) @map("koth_name")
-  wins       Int?       @default(0)
-  kothPlayer PlayerKoth @relation(fields: [uuid], references: [uuid], onDelete: Cascade, onUpdate: NoAction, map: "koth_stats_ibfk_1")
-
-  @@id([uuid, kothName])
-  @@map("koth_stats")
-}
-
-model PlayerKothWin {
-  id          Int        @id @default(autoincrement())
-  uuid        String     @db.VarChar(36) @map("player_uuid")
-  kothName    String     @db.VarChar(64) @map("koth_name")
-  winTime     DateTime?  @default(now()) @db.Timestamp(0) @map("win_time")
-  kothPlayer  PlayerKoth @relation(fields: [uuid], references: [uuid], onDelete: Cascade, onUpdate: NoAction, map: "koth_wins_ibfk_1")
-
-  @@index([uuid], map: "player_uuid")
-  @@map("koth_wins")
 }

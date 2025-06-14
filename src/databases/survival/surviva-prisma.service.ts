@@ -7,9 +7,7 @@ export class SurvivalPrismaService
   implements OnModuleInit, OnModuleDestroy
 {
   constructor() {
-    super({
-      log: ['error', 'info', 'query', 'warn'],
-    });
+    super();
   }
 
   async onModuleInit() {

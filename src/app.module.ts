@@ -5,7 +5,7 @@ import { LeaderboardsModule } from './modules/leaderboards/leaderboards.module';
 import { PlayersModule } from './modules/players/players.module';
 import { ResponseModule } from './shared/response/response.module';
 import { APP_FILTER } from '@nestjs/core';
-import { HttpExceptionFilter } from './http-exception.filter';
+import { GlobalExceptionFilter } from './http-exception.filter';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule } from '@nestjs/config';
 import { validate } from '@/config/config.validation';
@@ -35,7 +35,7 @@ import { SentryModule } from '@sentry/nestjs/setup';
     AppService,
     {
       provide: APP_FILTER,
-      useClass: HttpExceptionFilter,
+      useClass: GlobalExceptionFilter,
     },
   ],
 })

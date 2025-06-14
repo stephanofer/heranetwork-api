@@ -1,21 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { StatsType } from '@/shared/interfaces/stats-type.interface';
+import { RpgPrismaService } from '@/databases/rpg/rpg-prisma.service';
 import {
   LeaderboardEntry,
   RankingEntry,
 } from '@/modules/leaderboards/dto/leaderboard-entry.interface';
-import {
-  InvalidLeaderboardTypeException,
-  LeaderboardDataException,
-} from '@/modules/leaderboards/exceptions/leaderboard.exceptions';
 import { LeaderboardOptions } from '@/modules/leaderboards/dto/leaderboard-options.interface';
-import { RpgPrismaService } from '@/databases/rpg/rpg-prisma.service';
+import { InvalidLeaderboardTypeException } from '@/modules/leaderboards/exceptions/leaderboard.exceptions';
 import { PlayersService } from '@/modules/players/services/players.service';
+import { StatsType } from '@/shared/interfaces/stats-type.interface';
 import { Prisma } from '@global/client';
-import {
-  PrismaClientKnownRequestError,
-  PrismaClientValidationError,
-} from '@prisma/client/runtime/library';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class LeaderBoardsServiceRPG {
@@ -31,22 +24,7 @@ export class LeaderBoardsServiceRPG {
     try {
       return await this.fetchLeaderboardByType(type, options);
     } catch (error) {
-      if (error instanceof InvalidLeaderboardTypeException) {
-        throw error;
-      }
-
-      if (error instanceof PrismaClientKnownRequestError) {
-        throw new LeaderboardDataException(`Database error: ${error.code}`);
-      }
-
-      if (error instanceof PrismaClientValidationError) {
-        throw new LeaderboardDataException('Database validation error');
-      }
-
-      throw new LeaderboardDataException(
-        'Failed to retrieve leaderboard data',
-        error,
-      );
+      throw error;
     }
   }
 

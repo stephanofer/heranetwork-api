@@ -10,12 +10,15 @@ import { Response } from 'express';
 
 @Controller('rpg/leaderboards')
 export class LeaderboardsControllerRPG {
+  private readonly CACHETTL: number;
   constructor(
     private readonly leaderboardsService: LeaderBoardsServiceRPG,
     private readonly configService: ConfigService<EnvConfig, true>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly responseService: ResponseService,
-  ) {}
+  ) {
+    this.CACHETTL = configService.get('CACHE_TTL');
+  }
 
   @Get()
   async getLeaderboard(
@@ -23,7 +26,6 @@ export class LeaderboardsControllerRPG {
     @Res() res: Response,
   ) {
     const { type, limit = 150, offset = 0 } = query;
-    const cacheTTL = this.configService.get('CACHE_TTL');
 
     const cacheKey = `LeaderBoardRPG:${type}:limit=${limit}:offset=${offset}`;
     const cachedData =
@@ -42,7 +44,11 @@ export class LeaderboardsControllerRPG {
       offset,
     });
 
-    await this.cacheManager.set<LeaderboardEntry[]>(cacheKey, data, cacheTTL);
+    await this.cacheManager.set<LeaderboardEntry[]>(
+      cacheKey,
+      data,
+      this.CACHETTL,
+    );
     res.setHeader('X-Cache-Status', 'MISS');
 
     return res.json(this.responseService.success<LeaderboardEntry[]>(data));

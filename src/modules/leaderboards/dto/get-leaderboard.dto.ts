@@ -23,7 +23,7 @@ export class GetLeaderboardDto {
 }
 
 export class GetLeaderboardSurvivalDto {
-  @IsEnum(StatsType)
+  @IsEnum(StatsTypeSurvival)
   type: StatsTypeSurvival;
 
   @IsOptional()

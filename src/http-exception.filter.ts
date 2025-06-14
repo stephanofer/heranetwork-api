@@ -4,45 +4,66 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
-import { captureException } from '@sentry/nestjs';
 import { Request, Response } from 'express';
+import { SentryExceptionCaptured } from '@sentry/nestjs';
+import * as Sentry from '@sentry/nestjs';
 
-@Catch()
-export class HttpExceptionFilter implements ExceptionFilter {
-  catch(exception: HttpException, host: ArgumentsHost) {
+@Catch() 
+export class GlobalExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(GlobalExceptionFilter.name);
+
+  @SentryExceptionCaptured() 
+  catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    if (status >= 500) {
-      captureException(exception, {
-        extra: {
-          url: request.url,
+    let status: number;
+    let message: string;
+    let shouldReportToSentry = false;
+
+
+    if (exception instanceof HttpException) {
+      
+      status = exception.getStatus();
+      message = exception.message;
+      shouldReportToSentry = status >= 500;
+      
+    } else {
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+      message = 'Internal Server Error';
+      shouldReportToSentry = true;
+    }
+
+    if (shouldReportToSentry) {
+      Sentry.captureException(exception, {
+        tags: {
+          endpoint: request.url,
           method: request.method,
+          userAgent: request.get('user-agent'),
+        },
+        extra: {
+          body: request.body,
           params: request.params,
           query: request.query,
         },
-        tags: {
-          route: request.route?.path,
-        },
+        level: status >= 500 ? 'error' : 'warning',
       });
     }
 
-    const message =
-      exception instanceof HttpException
-        ? exception.message
-        : 'Error interno del servidor';
-
-    response.status(status).json({
+    const errorResponse = {
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
       message,
-    });
+      ...(process.env.NODE_ENV === 'development' && 
+         !(exception instanceof HttpException) && {
+        error: exception instanceof Error ? exception.message : String(exception),
+      }),
+    };
+
+    response.status(status).json(errorResponse);
   }
 }

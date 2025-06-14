@@ -7,15 +7,17 @@ import { EnvConfig } from '@/config/env.validation';
 import { LeaderboardEntry } from '@/modules/leaderboards/dto/leaderboard-entry.interface';
 import { Response } from 'express';
 import { LeaderBoardsServiceSurvival } from '@/modules/leaderboards/services/leaderboard.survival.service';
-
 @Controller('survival/leaderboards')
 export class LeaderboardsControllerSurvival {
+  private readonly CACHETTL: number;
   constructor(
     private readonly leaderboardsService: LeaderBoardsServiceSurvival,
     private readonly configService: ConfigService<EnvConfig, true>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly responseService: ResponseService,
-  ) {}
+  ) {
+    this.CACHETTL = this.configService.get('CACHE_TTL');
+  }
 
   @Get()
   async getLeaderboard(
@@ -23,7 +25,6 @@ export class LeaderboardsControllerSurvival {
     @Res() res: Response,
   ) {
     const { type, limit = 150, offset = 0 } = query;
-    const cacheTTL = this.configService.get('CACHE_TTL');
 
     const cacheKey = `LeaderBoardSurvival:${type}:limit=${limit}:offset=${offset}`;
     const cachedData =
@@ -42,7 +43,11 @@ export class LeaderboardsControllerSurvival {
       offset,
     });
 
-    await this.cacheManager.set<LeaderboardEntry[]>(cacheKey, data, cacheTTL);
+    await this.cacheManager.set<LeaderboardEntry[]>(
+      cacheKey,
+      data,
+      this.CACHETTL,
+    );
     res.setHeader('X-Cache-Status', 'MISS');
 
     return res.json(this.responseService.success<LeaderboardEntry[]>(data));

@@ -11,7 +11,7 @@ export class AppConfigService {
   }
 
   get getEnvironment(): string {
-    return this.configService.get('ENVIRONMENT', { infer: true });
+    return this.configService.get('NODE_ENV', { infer: true });
   }
 
   get getSentryDSN(): string {

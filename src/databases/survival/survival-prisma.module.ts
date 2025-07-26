@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { SurvivalPrismaService } from '@/databases/survival/surviva-prisma.service';
+import { SurvivalPrismaService } from '@/databases/survival/survival-prisma.service';
 
 @Global()
 @Module({

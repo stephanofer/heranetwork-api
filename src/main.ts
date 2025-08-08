@@ -36,7 +36,5 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
 
   await app.listen(port, '0.0.0.0');
-  Logger.log(`API RUNNING ON PORT ${port}`);
-  Logger.log(`API RUNNING ON ENVIROMENT ${isProduction}`);
 }
 bootstrap();

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LeaderBoardsServiceSurvival } from '../leaderboard.survival.service';
-import { SurvivalPrismaService } from '@/databases/survival/surviva-prisma.service';
+import { SurvivalPrismaService } from '@/databases/survival/survival-prisma.service';
 import { PlayersService } from '@/modules/players/services/players.service';
 import { StatsTypeSurvival } from '@/shared/interfaces/stats-type.interface';
 import {

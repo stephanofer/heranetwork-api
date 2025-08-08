@@ -1,9 +1,9 @@
 ### Health for all ecosystem
-GET http://localhost:3000/api/health
+GET http://localhost:3000/api/v1/health
 Accept: application/json
 
 ### Leaderboards RPG
-GET http://localhost:3000/api/v1/rpg/leaderboards?type=killsd
+GET http://localhost:3000/api/v1/rpg/leaderboards?type=kills
 Accept: application/json
 
 ### Leaderboards Survival

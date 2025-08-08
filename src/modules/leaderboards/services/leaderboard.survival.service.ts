@@ -1,4 +1,4 @@
-import { SurvivalPrismaService } from '@/databases/survival/surviva-prisma.service';
+import { SurvivalPrismaService } from '@/databases/survival/survival-prisma.service';
 import {
   LeaderboardEntry,
   RankingEntry,

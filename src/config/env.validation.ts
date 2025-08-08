@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const envSchema = z.object({
   CACHE_TTL: z.coerce.number().int().positive(),
-  ENVIRONMENT: z.string(),
+  NODE_ENV: z.string(),
   SENTRY_DSN: z.string(),
 });
 

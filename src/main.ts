@@ -1,11 +1,28 @@
 import '@/instrument';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '@/app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import * as compression from 'compression';
+import helmet from 'helmet';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const isProduction = process.env.NODE_ENV === 'production';
+
+  const app = await NestFactory.create(AppModule, {
+    logger: isProduction
+      ? ['error', 'warn', 'log']
+      : ['error', 'warn', 'log', 'debug', 'verbose'],
+  });
+  app.use(helmet());
+  app.use(compression());
+
+  app.enableCors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:4321',
+    credentials: true,
+    methods: ['GET'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
+
   app.setGlobalPrefix('api/v1');
   app.useGlobalPipes(
     new ValidationPipe({
@@ -16,13 +33,10 @@ async function bootstrap() {
     }),
   );
 
-  app.use(compression());
-  // app.enableCors({
-  //   origin: ['https://heramc.net'],
-  //   methods: ['GET', 'POST'],
-  //   credentials: true,
-  // });
+  const port = process.env.PORT || 3000;
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(port, '0.0.0.0');
+  Logger.log(`API RUNNING ON PORT ${port}`);
+  Logger.log(`API RUNNING ON ENVIROMENT ${isProduction}`);
 }
 bootstrap();

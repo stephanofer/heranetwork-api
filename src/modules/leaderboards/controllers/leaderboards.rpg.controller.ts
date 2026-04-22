@@ -33,6 +33,8 @@ export class LeaderboardsControllerRPG {
 
     if (cachedData) {
       res.setHeader('X-Cache-Status', 'HIT');
+      res.setHeader('X-Cache-Remaining', Math.floor(timeRemaining / 1000)); // en segundos
+      res.setHeader('X-Cache-Expires-At', new Date(cacheExpiry).toISOString());
 
       return res.json(
         this.responseService.success<LeaderboardEntry[]>(cachedData),
@@ -50,6 +52,8 @@ export class LeaderboardsControllerRPG {
       this.CACHETTL,
     );
     res.setHeader('X-Cache-Status', 'MISS');
+    res.setHeader('X-Cache-Remaining', Math.floor(this.CACHETTL / 1000)); // TTL completo
+    res.setHeader('X-Cache-Expires-At', new Date(expiryTime).toISOString());
 
     return res.json(this.responseService.success<LeaderboardEntry[]>(data));
   }
